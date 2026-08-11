@@ -697,4 +697,10 @@ input[type="range"]::-moz-range-thumb {
   .work-nav { grid-template-columns: 1fr; }
   .work-nav .btn { justify-self: stretch; }
   .work-nav__item--next { text-align: left; align-items: flex-start; }
+  /* La galería pasa a una columna: dos imágenes 16:9 de ~170px no se ven. */
+  .trabajos-galeria .container { grid-template-columns: 1fr; }
+}
+@media (max-width: 520px) {
+  .trabajos-meta__row { grid-template-columns: 1fr; gap: 4px; }
+  .trabajos-meta dt { padding-top: 0; }
 }
