@@ -1,7 +1,8 @@
-import { useState, type ReactNode } from "react";
+import { useState } from "react";
 import { ArrowLeft, ClipboardCheck, LogOut, Users } from "lucide-react";
 import { Gate } from "./Gate";
 import { LeadsTab } from "./LeadsTab";
+import { OnboardingTab } from "./OnboardingTab";
 import { loadLeads } from "../../data/leads";
 import { CHECKLIST } from "../../data/checklist";
 import { KEYS, Store } from "../../data/storage";
@@ -12,10 +13,16 @@ export function PanelView() {
   const [authed, setAuthed] = useState(() => Store.get<string>(KEYS.auth, "0") === "1");
   const [tab, setTab] = useState<Tab>("leads");
 
-  /* Contadores de las pestañas. El de Onboarding es un placeholder:
-     la Task 12 construye el checklist y ahí reflejará el progreso guardado. */
+  /* Contadores de las pestañas. El de Onboarding refleja el progreso
+     guardado en el checklist: completados/total. */
   const leadsCount = loadLeads().length;
-  const onboardingCount = CHECKLIST.reduce((n, phase) => n + phase.items.length, 0);
+  const checkDone = Store.get<{ done?: Record<string, boolean> }>(KEYS.check, {}).done ?? {};
+  const checkTotal = CHECKLIST.reduce((n, phase) => n + phase.items.length, 0);
+  const checkCompleted = CHECKLIST.reduce(
+    (n, phase, i) => n + phase.items.filter((_, j) => checkDone[`pi-${i}-${j}`]).length,
+    0
+  );
+  const onboardingCount = `${checkCompleted}/${checkTotal}`;
 
   const unlock = () => {
     Store.set(KEYS.auth, "1");
@@ -78,43 +85,9 @@ export function PanelView() {
             </button>
           </nav>
 
-          {tab === "leads" ? <LeadsTab /> : <OnboardingPlaceholder />}
+          {tab === "leads" ? <LeadsTab /> : <OnboardingTab />}
         </div>
       </div>
     </div>
-  );
-}
-
-/* Panel placeholder: la Task 12 reemplaza el de Onboarding. */
-function PanelPlaceholder({ icon, title, copy }: { icon: ReactNode; title: string; copy: string }) {
-  return (
-    <div
-      className="tab-panel on"
-      style={{
-        border: "1px solid var(--line)",
-        borderRadius: "var(--radius)",
-        background: "rgba(var(--c-s1), 0.4)",
-        padding: "clamp(40px, 7vw, 88px)",
-        textAlign: "center",
-      }}
-    >
-      <div style={{ color: "var(--accent)", marginBottom: 16 }}>{icon}</div>
-      <h2 className="h-md" style={{ marginBottom: 8 }}>
-        {title}
-      </h2>
-      <p className="body-muted" style={{ margin: 0, maxWidth: "52ch", marginInline: "auto" }}>
-        {copy}
-      </p>
-    </div>
-  );
-}
-
-function OnboardingPlaceholder() {
-  return (
-    <PanelPlaceholder
-      icon={<ClipboardCheck size={38} aria-hidden="true" />}
-      title="Checklist de incorporación"
-      copy="El checklist interno con las etapas y los pasos del proceso de onboarding. Próximamente."
-    />
   );
 }
