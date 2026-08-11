@@ -4,10 +4,13 @@ import { ArrowLeft, ArrowRight, Check, CircleAlert } from "lucide-react";
 import { briefReducer, type BriefState } from "./briefReducer";
 import { STEPS, type Control } from "./steps";
 import { BudgetSlider, Field, OptionCard, Pill, StepHeader } from "./controls";
+import { DoneView } from "./DoneView";
+import { buildRecord } from "./submit";
 import { STEP_NAMES } from "../../data/briefOptions";
-import { EMPTY_LEAD, type LeadData } from "../../data/types";
+import { EMPTY_LEAD, type LeadData, type LeadRecord } from "../../data/types";
 import { KEYS, Store } from "../../data/storage";
 import { makeRef } from "../../data/leads";
+import { validateStep } from "../../data/validation";
 
 /* Copy de cabeceras de paso: 1:1 de index 1.html (líneas 2085-2268). */
 const STEP_HEADS: { title: string; subtitle: string }[] = [
@@ -37,10 +40,6 @@ const STEP_HEADS: { title: string; subtitle: string }[] = [
   },
 ];
 
-/* Opciones de "¿Cómo nos conociste?" — 1:1 de index 1.html (líneas 2290-2297).
-   Task 9 las unifica con FORM; acá se renderizan para que el select ya funcione. */
-const COMO_CONOCISTE = ["Recomendación de alguien", "Instagram", "LinkedIn", "Google", "Facebook", "Un evento o charla", "Otro"];
-
 /** Restaura el borrador guardado (nx_draft). Tipado explícito porque
  *  `Store.get(KEYS.draft, null)` infiere T = null bajo TS strict. */
 function hydrateDraft(): BriefState {
@@ -50,12 +49,14 @@ function hydrateDraft(): BriefState {
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
-export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPartial: () => void }) {
+export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord) => void; onPartial: (rec: LeadRecord) => void }) {
   const [state, dispatch] = useReducer(briefReducer, undefined, hydrateDraft);
   const [toast, setToast] = useState<string | null>(null);
   const [saved, setSaved] = useState(false);
   const [dir, setDir] = useState<1 | -1>(1);
+  const [done, setDone] = useState<LeadRecord | null>(null);
   const ref = useRef(makeRef()); // ref persistente de la sesión
+  const sentPartial = useRef(false); // el parcial se guarda UNA sola vez por sesión
 
   const step = STEPS[state.step - 1];
 
@@ -82,9 +83,20 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
   const backTo = (n: number) => dispatch({ type: "HYDRATE", state: { step: n, values: state.values, errors: {} } });
 
   const next = () => {
-    if (state.step === 2) onPartial();
+    /* Guardado parcial: una vez por sesión, al salir del paso 2. */
+    if (state.step === 2 && !sentPartial.current) {
+      sentPartial.current = true;
+      onPartial(buildRecord(ref.current, "parcial", state.values, location.hostname));
+    }
     if (state.step === 6) {
-      onSubmit();
+      /* El paso 6 valida antes de enviar (privacidad); GO frena con los errores. */
+      if (Object.keys(validateStep(6, state.values)).length > 0) {
+        dispatch({ type: "GO", step: state.step + 1 });
+        return;
+      }
+      const rec = buildRecord(ref.current, "nuevo", state.values, location.hostname);
+      onSubmit(rec);
+      setDone(rec);
       return;
     }
     setDir(1);
@@ -109,6 +121,16 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
       dispatch({ type: "GO", step: n });
     }
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  /* "Enviar otro formulario" (DoneView): RESTART + ref nuevo + parcial limpio. */
+  const restart = () => {
+    ref.current = makeRef();
+    sentPartial.current = false;
+    setSaved(false);
+    setDone(null);
+    Store.del(KEYS.draft);
+    dispatch({ type: "RESTART" });
   };
 
   /* Error visible del grupo de opciones (1:1 del texto de validateStep). */
@@ -208,11 +230,34 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
                 onChange={(e) => dispatch({ type: "SET", key: c.key, value: e.target.value })}
               >
                 <option value="">Seleccioná una opción</option>
-                {COMO_CONOCISTE.map((o) => (
+                {c.options.map((o) => (
                   <option key={o}>{o}</option>
                 ))}
               </select>
             </Field>
+          </motion.div>
+        );
+      case "check":
+        return (
+          <motion.div className="fieldset" key={i} {...field}>
+            <label
+              className={`opt opt--radio${state.values.privacidad ? " is-on" : ""}`}
+              style={{ alignItems: "center" }}
+            >
+              <input
+                type="checkbox"
+                checked={state.values.privacidad}
+                onChange={() => dispatch({ type: "SET", key: "privacidad", value: !state.values.privacidad })}
+              />
+              <span className="opt__box">
+                <Check aria-hidden="true" />
+              </span>
+              <span className="opt__txt">
+                <b>Autorizo a NOXTUA a contactarme por email o WhatsApp</b>
+                <span>Solo para responder esta consulta. Podés pedir la baja cuando quieras.</span>
+              </span>
+            </label>
+            {groupErr("privacidad")}
           </motion.div>
         );
       case "slider":
@@ -241,13 +286,17 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
           </span>
         </div>
         <div className="app__progress">
-          <i style={{ width: `${((state.step - 1) / 6) * 100}%` }} />
+          <i style={{ width: `${(done ? 6 : state.step - 1) / 6 * 100}%` }} />
         </div>
       </header>
 
       <div className="app__body">
         <div className="app__wrap">
-          <div className="steps-rail" role="tablist" aria-label="Pasos del diagnóstico">
+          {done ? (
+            <DoneView rec={done} onRestart={restart} />
+          ) : (
+            <>
+              <div className="steps-rail" role="tablist" aria-label="Pasos del diagnóstico">
             {STEP_NAMES.map((name, i) => {
               const n = i + 1;
               return (
@@ -277,13 +326,16 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
               >
                 <StepHeader step={state.step} title={STEP_HEADS[state.step - 1].title} subtitle={STEP_HEADS[state.step - 1].subtitle} />
                 {step.controls.map((c, i) => renderControl(c, i))}
-              </motion.div>
-            </AnimatePresence>
-          </div>
+                </motion.div>
+              </AnimatePresence>
+            </div>
+            </>
+          )}
         </div>
       </div>
 
-      <nav className="app__nav">
+      {!done && (
+        <nav className="app__nav">
         <div className="app__nav-in">
           <span className="app__count">Paso {state.step} de 6</span>
           <div className="app__nav-actions">
@@ -298,6 +350,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
           </div>
         </div>
       </nav>
+      )}
 
       {toast && (
         <div className="toast show">

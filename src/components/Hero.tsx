@@ -118,7 +118,7 @@ export function Hero() {
             </motion.p>
 
             <motion.div className="hero__actions" variants={fadeUp(0.28)} initial={initial} animate="visible">
-              <a className="btn btn--primary btn--lg" href="#contacto">
+              <a className="btn btn--primary btn--lg" href="#/brief">
                 {HERO.primaryCta}
                 <ArrowRight aria-hidden="true" />
               </a>

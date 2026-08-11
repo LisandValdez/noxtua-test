@@ -480,10 +480,10 @@ export const FOOTER = {
   ],
   contactTitle: "Contacto",
   contact: [
-    { label: "Análisis sin costo", href: "#contacto" },
+    { label: "Análisis sin costo", href: "#/brief" },
     { label: "Escribirnos", href: `mailto:${CONTACTO.email}` },
     { label: "WhatsApp", href: `https://wa.me/${CONTACTO.whatsapp}?text=${encodeURIComponent(WA_DEFAULT_MSG)}` },
-    { label: "Acceso equipo", href: "#contacto" },
+    { label: "Acceso equipo", href: "#/panel" },
   ],
   bottom: "NOXTUA. Diseño, estrategia y comunicación con dirección.",
   city: "Mendoza, Argentina",

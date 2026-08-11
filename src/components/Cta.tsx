@@ -13,7 +13,7 @@ export function Cta() {
           <h2 className="h-xl">{CTA.h2}</h2>
           <p className="lead">{CTA.lead}</p>
           <div className="cta__actions">
-            <a className="btn btn--primary btn--lg" href="#contacto">
+            <a className="btn btn--primary btn--lg" href="#/brief">
               {CTA.primary}
               <ArrowRight aria-hidden="true" />
             </a>

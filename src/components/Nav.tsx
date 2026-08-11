@@ -80,7 +80,7 @@ export function Nav() {
             ))}
           </nav>
 
-          <a className="btn btn--primary btn--sm nav__cta" href="#contacto">
+          <a className="btn btn--primary btn--sm nav__cta" href="#/brief">
             {NAV_CTA}
             <ArrowRight aria-hidden="true" />
           </a>
@@ -106,7 +106,7 @@ export function Nav() {
             <i>{l.num}</i>
           </a>
         ))}
-        <a className="btn btn--primary btn--lg" href="#contacto" onClick={() => setOpen(false)}>
+        <a className="btn btn--primary btn--lg" href="#/brief" onClick={() => setOpen(false)}>
           {NAV_CTA}
           <ArrowRight aria-hidden="true" />
         </a>
