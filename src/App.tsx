@@ -1,4 +1,3 @@
-import { ArrowLeft } from "lucide-react";
 import { Ambient } from "./components/Ambient";
 import { Nav } from "./components/Nav";
 import { Hero } from "./components/Hero";
@@ -15,6 +14,7 @@ import { Contacto } from "./components/Contacto";
 import { Footer } from "./components/Footer";
 import { Fab } from "./components/Fab";
 import { BriefView } from "./components/brief/BriefView";
+import { PanelView } from "./components/panel/PanelView";
 import { savePartial, submitFinal } from "./components/brief/submit";
 import { useHashRoute } from "./router";
 import { KEYS, Store } from "./data/storage";
@@ -35,30 +35,7 @@ export default function App() {
 
   if (route === "/brief") return <BriefView onSubmit={handleFinal} onPartial={handlePartial} />;
 
-  if (route === "/panel") {
-    return (
-      <div className="app">
-        <header className="app__bar">
-          <div className="app__bar-in">
-            <a className="app__exit" href="#/">
-              <ArrowLeft aria-hidden="true" />
-              Volver al sitio
-            </a>
-            <a className="brand" href="#/" aria-label="NOXTUA, ir al inicio">
-              <span className="brand__name">NOXTUA</span>
-            </a>
-          </div>
-        </header>
-        <div className="app__body">
-          <div className="app__wrap" style={{ textAlign: "center" }}>
-            <p style={{ marginTop: "clamp(48px, 10vw, 120px)", color: "var(--muted)", fontSize: "1.05rem" }}>
-              Panel en construcción
-            </p>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  if (route === "/panel") return <PanelView />;
 
   return (
     <>
