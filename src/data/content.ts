@@ -186,47 +186,6 @@ export const SERVICIOS: ReadonlyArray<{
   },
 ];
 
-/* ---------- Método ---------- */
-export const METODO_HEAD = {
-  eyebrow: "Método",
-  h2: "Cinco etapas con fechas desde el primer día.",
-  lead:
-    "Este es el proceso que seguimos con cada cliente, desde antes de la primera reunión hasta la optimización mensual.",
-} as const;
-
-export const METODO: ReadonlyArray<{ n: string; t: string; d: string }> = [
-  {
-    n: "Paso 01",
-    t: "Análisis previo",
-    d: "Revisamos tu sitio, tus redes, tus reseñas y lo que publica tu competencia antes de la primera reunión.",
-  },
-  {
-    n: "Paso 02",
-    t: "Reunión de estrategia",
-    d: "Entre 60 y 90 minutos para acordar objetivos, métricas y canales, y dejar resueltos los accesos.",
-  },
-  {
-    n: "Paso 03",
-    t: "Marca y recursos visuales",
-    d: "Analizamos el material disponible y, si tu marca todavía no tiene identidad, la construimos antes de producir contenido.",
-  },
-  {
-    n: "Paso 04",
-    t: "Estrategia y contenidos",
-    d: "Hasta 15 días hábiles para la primera entrega completa, lista para que la apruebes.",
-  },
-  {
-    n: "Paso 05",
-    t: "Lanzamiento y optimización",
-    d: "Publicamos con tu aprobación, reportamos a las 72 horas y revisamos el rendimiento cada semana.",
-  },
-];
-
-export const METODO_CALLOUT = {
-  lead: "Sobre el período de aprendizaje:",
-  body: " las campañas de Meta necesitan alrededor de 50 conversiones en siete días para que su optimización se estabilice, así que el costo por resultado suele moverse bastante durante las primeras semanas.",
-} as const;
-
 /* ---------- Planes ---------- */
 export const PLANES_HEAD = {
   eyebrow: "Planes",

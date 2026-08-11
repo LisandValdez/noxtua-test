@@ -607,31 +607,6 @@ h1, h2, h3, h4, h5 {
 }
 
 /* ============================================================
-   Método (timeline horizontal)
-   ============================================================ */
-.method { display: grid; grid-template-columns: repeat(auto-fit, minmax(215px, 1fr)); gap: 2px; background: var(--line); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
-.method__step {
-  background: var(--bg);
-  padding: clamp(24px, 2.8vw, 32px);
-  position: relative;
-  transition: background var(--t) var(--ease);
-}
-.method__step:hover { background: var(--s1); }
-.method__num {
-  font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.18em;
-  color: var(--accent); text-transform: uppercase; margin-bottom: 18px; display: block;
-}
-.method__step h3 { font-size: 1.08rem; margin-bottom: 11px; }
-.method__step p { font-size: 0.87rem; color: var(--muted); line-height: 1.58; }
-.method__step::after {
-  content: ""; position: absolute; left: 0; bottom: 0; height: 2px; width: 0;
-  background: linear-gradient(90deg, var(--accent-3), transparent);
-  transition: width 1.2s var(--ease-out);
-  transition-delay: var(--d, 0ms);
-}
-.method__step.in::after { width: 100%; }
-
-/* ============================================================
    Planes
    ============================================================ */
 .plans { display: grid; grid-template-columns: repeat(auto-fit, minmax(268px, 1fr)); gap: clamp(16px, 2vw, 22px); align-items: stretch; }
@@ -930,19 +905,6 @@ h1, h2, h3, h4, h5 {
 }
 .cta__micro span { display: flex; align-items: center; gap: 7px; }
 .cta__micro svg { width: 14px; height: 14px; color: var(--accent); }
-
-/* ============================================================
-   Nota informativa (callout)
-   ============================================================ */
-.callout {
-  display: flex; gap: 14px; align-items: flex-start;
-  padding: 18px 20px; border-radius: var(--radius-sm);
-  background: rgba(var(--c-accent), 0.06);
-  border: 1px solid rgba(var(--c-accent), 0.18);
-  font-size: 0.855rem; color: var(--muted); line-height: 1.58;
-}
-.callout svg { width: 17px; height: 17px; color: var(--accent); flex-shrink: 0; margin-top: 2px; }
-.callout b { color: var(--text); font-weight: 550; }
 
 /* ============================================================
    Contacto + Footer

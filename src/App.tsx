@@ -5,7 +5,6 @@ import { ComoTrabajamos } from "./components/ComoTrabajamos";
 import { Marquee } from "./components/Marquee";
 import { Diferencia } from "./components/Diferencia";
 import { Servicios } from "./components/Servicios";
-import { Metodo } from "./components/Metodo";
 import { Planes } from "./components/Planes";
 import { Trabajo } from "./components/Trabajo";
 import { Equipo } from "./components/Equipo";
@@ -60,7 +59,6 @@ export default function App() {
         <Marquee />
         <Diferencia />
         <Servicios />
-        <Metodo />
         <Planes />
         <Trabajo />
         <Equipo />
