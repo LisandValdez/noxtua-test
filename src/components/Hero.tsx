@@ -15,12 +15,13 @@ const fadeUp = (delay: number): Variants => ({
 
 export function Hero() {
   const reduce = useReducedMotion();
-  const isSmall = useMediaQuery("(max-width: 640px)");
   const finePointer = useMediaQuery("(hover: hover) and (pointer: fine)");
   const initial = reduce ? false : "hidden";
 
   const show3d = finePointer && !reduce;
-  const showVideo = !isSmall && !reduce;
+  /* El video del hero se reproduce en todos los viewports; con reduced-motion se
+     muestra la imagen estática (.hero__media-bg). */
+  const showVideo = !reduce;
 
   const railRef = useRef<HTMLElement>(null);
   const railInView = useInView(railRef, { amount: 0.25 });
@@ -60,7 +61,7 @@ export function Hero() {
             loop
             muted
             playsInline
-            preload="metadata"
+            preload="auto"
           />
         </motion.div>
       ) : (
