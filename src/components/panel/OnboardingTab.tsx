@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Check, ChevronDown, RotateCcw } from "lucide-react";
 import { CHECKLIST } from "../../data/checklist";
 import { KEYS, Store } from "../../data/storage";
@@ -10,6 +11,8 @@ import { KEYS, Store } from "../../data/storage";
    `done` usa claves "pi-{i}-{j}" (i = índice de fase, j = índice
    de item), según el plan de la Task 12. Cada cambio se persiste
    vía Store.set; "Reiniciar" limpia `done` (conserva el cliente).
+   El colapso del acordeón usa AnimatePresence + altura animada
+   (gated por useReducedMotion); con reduce se renderiza directo.
    ============================================================ */
 
 type CheckState = { cliente: string; done: Record<string, boolean> };
@@ -18,7 +21,11 @@ const keyOf = (i: number, j: number) => `pi-${i}-${j}`;
 
 const TAG_LABEL = { crit: "Crítico", cliente: "Cliente" } as const;
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+const BAR_SPRING = { type: "spring", stiffness: 90, damping: 24 } as const;
+
 export function OnboardingTab() {
+  const reduce = useReducedMotion();
   /* Estado inicial desde el store, tolerante a formatos viejos/malformados. */
   const [state, setState] = useState<CheckState>(() => {
     const stored = Store.get<Partial<CheckState>>(KEYS.check, {});
@@ -45,6 +52,19 @@ export function OnboardingTab() {
   };
 
   const reset = () => persist({ ...state, done: {} });
+
+  /* Stagger de los ítems al abrir una fase (solo anima al montar el cuerpo). */
+  const itemContainer = reduce ? undefined : { hidden: {}, visible: { transition: { staggerChildren: 0.04 } } };
+  const checkItem = reduce
+    ? undefined
+    : { hidden: { opacity: 0, y: 6 }, visible: { opacity: 1, y: 0, transition: { duration: 0.25 } } };
+
+  const bar = (w: number) =>
+    reduce ? (
+      <i style={{ width: `${w}%` }} />
+    ) : (
+      <motion.i initial={false} animate={{ width: `${w}%` }} transition={BAR_SPRING} />
+    );
 
   return (
     <div className="tab-panel on">
@@ -75,13 +95,48 @@ export function OnboardingTab() {
         aria-valuemax={100}
         aria-label="Progreso total del checklist"
       >
-        <i style={{ width: `${pct}%` }} />
+        {bar(pct)}
       </div>
 
       {CHECKLIST.map((phase, i) => {
         const isOpen = !!open[i];
         const done = phase.items.filter((_, j) => state.done[keyOf(i, j)]).length;
         const phasePct = phase.items.length ? Math.round((done / phase.items.length) * 100) : 0;
+
+        const items = (
+          <motion.div
+            className="check-list"
+            variants={itemContainer}
+            initial={reduce ? false : "hidden"}
+            animate={reduce ? undefined : "visible"}
+          >
+            {phase.items.map((item, j) => {
+              const checked = !!state.done[keyOf(i, j)];
+              return (
+                <motion.label
+                  className={`check-item${checked ? " is-on" : ""}`}
+                  key={keyOf(i, j)}
+                  variants={reduce ? undefined : checkItem}
+                  initial={reduce ? false : "hidden"}
+                  animate={reduce ? undefined : "visible"}
+                >
+                  <input type="checkbox" checked={checked} onChange={() => toggle(i, j)} />
+                  <span className="check-item__box">
+                    <Check aria-hidden="true" />
+                  </span>
+                  <span className="check-item__txt">
+                    <b>
+                      {item.t}
+                      {item.tag && <em className={item.tag === "crit" ? "crit" : "cli"}>{TAG_LABEL[item.tag]}</em>}
+                    </b>
+                    {item.d && <span>{item.d}</span>}
+                  </span>
+                </motion.label>
+              );
+            })}
+          </motion.div>
+        );
+
         return (
           <section className={`check-phase${isOpen ? " open" : ""}`} key={phase.t}>
             <button
@@ -98,9 +153,7 @@ export function OnboardingTab() {
                 <b>{phase.t}</b>
                 <span>{phase.sub}</span>
               </span>
-              <span className="check-phase__bar">
-                <i style={{ width: `${phasePct}%` }} />
-              </span>
+              <span className="check-phase__bar">{bar(phasePct)}</span>
               <span className="check-phase__cnt">
                 {done}/{phase.items.length}
               </span>
@@ -115,30 +168,30 @@ export function OnboardingTab() {
                 }}
               />
             </button>
-            <div className="check-phase__body" id={`check-list-${i}`}>
-              <div>
-                <div className="check-list">
-                  {phase.items.map((item, j) => {
-                    const checked = !!state.done[keyOf(i, j)];
-                    return (
-                      <label className={`check-item${checked ? " is-on" : ""}`} key={keyOf(i, j)}>
-                        <input type="checkbox" checked={checked} onChange={() => toggle(i, j)} />
-                        <span className="check-item__box">
-                          <Check aria-hidden="true" />
-                        </span>
-                        <span className="check-item__txt">
-                          <b>
-                            {item.t}
-                            {item.tag && <em className={item.tag === "crit" ? "crit" : "cli"}>{TAG_LABEL[item.tag]}</em>}
-                          </b>
-                          {item.d && <span>{item.d}</span>}
-                        </span>
-                      </label>
-                    );
-                  })}
+            {reduce ? (
+              isOpen && (
+                <div className="check-phase__body" id={`check-list-${i}`}>
+                  <div>{items}</div>
                 </div>
-              </div>
-            </div>
+              )
+            ) : (
+              <AnimatePresence initial={false}>
+                {isOpen && (
+                  <motion.div
+                    key="body"
+                    className="check-phase__body"
+                    id={`check-list-${i}`}
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: "auto", opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.34, ease: EASE }}
+                    style={{ overflow: "hidden" }}
+                  >
+                    <div>{items}</div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            )}
           </section>
         );
       })}

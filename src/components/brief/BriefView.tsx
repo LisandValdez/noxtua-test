@@ -1,5 +1,5 @@
 import { useEffect, useReducer, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Check, CircleAlert } from "lucide-react";
 import { briefReducer, type BriefState } from "./briefReducer";
 import { STEPS, type Control } from "./steps";
@@ -57,8 +57,21 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
   const [done, setDone] = useState<LeadRecord | null>(null);
   const ref = useRef(makeRef()); // ref persistente de la sesión
   const sentPartial = useRef(false); // el parcial se guarda UNA sola vez por sesión
+  const reduce = useReducedMotion();
 
   const step = STEPS[state.step - 1];
+
+  /* Stagger de controles — con reduced-motion los variantes quedan off y cada
+     fieldset se renderiza en su estado final. */
+  const staggerContainer = reduce
+    ? undefined
+    : { hidden: {}, visible: { transition: { staggerChildren: 0.07, delayChildren: 0.04 } } };
+  const itemVariants = reduce
+    ? undefined
+    : {
+        hidden: { opacity: 0, y: 14 },
+        visible: { opacity: 1, y: 0, transition: { duration: 0.45, ease: "easeOut" } },
+      };
 
   /* Toast de reanudación si había un borrador guardado. */
   useEffect(() => {
@@ -143,15 +156,11 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
     ) : null;
 
   const renderControl = (c: Control, i: number) => {
-    const field = {
-      initial: { opacity: 0, y: 14 },
-      animate: { opacity: 1, y: 0 },
-      transition: { duration: 0.45, delay: i * 0.05, ease: "easeOut" as const },
-    };
+    const wrap = { variants: itemVariants };
     switch (c.kind) {
       case "opt-multi":
         return (
-          <motion.div className="fieldset" key={i} {...field}>
+          <motion.div className="fieldset" key={i} {...wrap}>
             <div className={`opts${c.col2 ? " opts--2" : " opts--3"}`}>
               {c.options.map((o) => (
                 <OptionCard
@@ -169,7 +178,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
         );
       case "opt-radio":
         return (
-          <motion.div className="fieldset" key={i} {...field}>
+          <motion.div className="fieldset" key={i} {...wrap}>
             <div className="opts opts--3">
               {c.options.map((o) => (
                 <OptionCard
@@ -187,7 +196,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
         );
       case "pills":
         return (
-          <motion.div className="fieldset" key={i} {...field}>
+          <motion.div className="fieldset" key={i} {...wrap}>
             <div className="opts opts--pills">
               {c.options.map((o) => (
                 <Pill key={o} t={o} checked={state.values[c.key].includes(o)} onChange={() => dispatch({ type: "TOGGLE", key: c.key, value: o })} />
@@ -198,7 +207,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
         );
       case "input":
         return (
-          <motion.div className="fieldset" key={i} {...field}>
+          <motion.div className="fieldset" key={i} {...wrap}>
             <Field label={c.label} error={state.errors[c.key]}>
               <input
                 type="text"
@@ -211,7 +220,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
         );
       case "textarea":
         return (
-          <motion.div className="fieldset" key={i} {...field}>
+          <motion.div className="fieldset" key={i} {...wrap}>
             <Field label={c.label} error={state.errors[c.key]}>
               <textarea
                 value={String(state.values[c.key])}
@@ -223,7 +232,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
         );
       case "select":
         return (
-          <motion.div className="fieldset" key={i} {...field}>
+          <motion.div className="fieldset" key={i} {...wrap}>
             <Field label={c.label} error={state.errors[c.key]}>
               <select
                 value={String(state.values[c.key])}
@@ -239,7 +248,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
         );
       case "check":
         return (
-          <motion.div className="fieldset" key={i} {...field}>
+          <motion.div className="fieldset" key={i} {...wrap}>
             <label
               className={`opt opt--radio${state.values.privacidad ? " is-on" : ""}`}
               style={{ alignItems: "center" }}
@@ -262,12 +271,27 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
         );
       case "slider":
         return (
-          <motion.div className="fieldset" key={i} {...field}>
+          <motion.div className="fieldset" key={i} {...wrap}>
             <BudgetSlider value={state.values.presupuesto} onChange={(v) => dispatch({ type: "SET", key: "presupuesto", value: v })} />
           </motion.div>
         );
     }
   };
+
+  const stepContent = (
+    <>
+      <StepHeader step={state.step} title={STEP_HEADS[state.step - 1].title} subtitle={STEP_HEADS[state.step - 1].subtitle} />
+      <motion.div
+        variants={staggerContainer}
+        initial={reduce ? false : "hidden"}
+        animate={reduce ? undefined : "visible"}
+      >
+        {step.controls.map((c, i) => renderControl(c, i))}
+      </motion.div>
+    </>
+  );
+
+  const progressPct = ((done ? 6 : state.step - 1) / 6) * 100;
 
   return (
     <div className="app">
@@ -286,7 +310,15 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
           </span>
         </div>
         <div className="app__progress">
-          <i style={{ width: `${(done ? 6 : state.step - 1) / 6 * 100}%` }} />
+          {reduce ? (
+            <i style={{ width: `${progressPct}%` }} />
+          ) : (
+            <motion.i
+              initial={false}
+              animate={{ width: `${progressPct}%` }}
+              transition={{ type: "spring", stiffness: 90, damping: 24 }}
+            />
+          )}
         </div>
       </header>
 
@@ -297,38 +329,66 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
           ) : (
             <>
               <div className="steps-rail" role="tablist" aria-label="Pasos del diagnóstico">
-            {STEP_NAMES.map((name, i) => {
-              const n = i + 1;
-              return (
-                <button
-                  key={n}
-                  type="button"
-                  role="tab"
-                  aria-selected={state.step === n}
-                  className={`steps-rail__item${state.step === n ? " current" : ""}${n < state.step ? " done" : ""}`}
-                  onClick={() => goTo(n)}
-                >
-                  <b>{n}</b>
-                  {name}
-                </button>
-              );
-            })}
-          </div>
+                {STEP_NAMES.map((name, i) => {
+                  const n = i + 1;
+                  const isCurrent = state.step === n;
+                  const isDone = n < state.step;
+                  return (
+                    <button
+                      key={n}
+                      type="button"
+                      role="tab"
+                      aria-selected={isCurrent}
+                      className={`steps-rail__item${isCurrent ? " current" : ""}${isDone ? " done" : ""}`}
+                      onClick={() => goTo(n)}
+                    >
+                      <b>
+                        {isDone ? (
+                          reduce ? (
+                            <Check size={12} aria-hidden="true" />
+                          ) : (
+                            <motion.span
+                              initial={{ scale: 0, opacity: 0 }}
+                              animate={{ scale: 1, opacity: 1 }}
+                              transition={{ type: "spring", stiffness: 500, damping: 28 }}
+                              style={{ display: "grid", placeItems: "center" }}
+                            >
+                              <Check size={12} aria-hidden="true" />
+                            </motion.span>
+                          )
+                        ) : (
+                          n
+                        )}
+                      </b>
+                      {name}
+                      {isCurrent &&
+                        (reduce ? (
+                          <span className="steps-rail__pill" aria-hidden="true" />
+                        ) : (
+                          <motion.span layoutId="step-pill" className="steps-rail__pill" aria-hidden="true" />
+                        ))}
+                    </button>
+                  );
+                })}
+              </div>
 
-          <div className="step active">
-            <AnimatePresence mode="wait" initial={false}>
-              <motion.div
-                key={state.step}
-                initial={{ opacity: 0, y: dir === 1 ? 26 : -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: dir === 1 ? -20 : 26 }}
-                transition={{ duration: 0.42, ease: EASE }}
-              >
-                <StepHeader step={state.step} title={STEP_HEADS[state.step - 1].title} subtitle={STEP_HEADS[state.step - 1].subtitle} />
-                {step.controls.map((c, i) => renderControl(c, i))}
-                </motion.div>
-              </AnimatePresence>
-            </div>
+              {reduce ? (
+                <div className="step active">{stepContent}</div>
+              ) : (
+                <div className="step active">
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={state.step}
+                      initial={{ opacity: 0, x: dir === 1 ? 36 : -36 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: dir === 1 ? -36 : 36 }}
+                      transition={{ duration: 0.45, ease: EASE }}
+                    >
+                      {stepContent}
+                    </motion.div>
+                  </AnimatePresence>
+                </div>
+              )}
             </>
           )}
         </div>
@@ -336,27 +396,56 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
 
       {!done && (
         <nav className="app__nav">
-        <div className="app__nav-in">
-          <span className="app__count">Paso {state.step} de 6</span>
-          <div className="app__nav-actions">
-            <button type="button" className="btn btn--ghost" onClick={prev} style={{ visibility: state.step === 1 ? "hidden" : "visible" }}>
-              <ArrowLeft aria-hidden="true" />
-              Atrás
-            </button>
-            <button type="button" className="btn btn--primary" onClick={next}>
-              {state.step === 6 ? "Enviar diagnóstico" : "Continuar"}
-              {state.step === 6 ? <Check aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}
-            </button>
+          <div className="app__nav-in">
+            <span className="app__count">Paso {state.step} de 6</span>
+            <div className="app__nav-actions">
+              <motion.button
+                type="button"
+                className="btn btn--ghost"
+                onClick={prev}
+                style={{ visibility: state.step === 1 ? "hidden" : "visible" }}
+                {...(reduce ? {} : { whileHover: { y: -2 }, whileTap: { scale: 0.97 } })}
+              >
+                <ArrowLeft aria-hidden="true" />
+                Atrás
+              </motion.button>
+              <motion.button
+                type="button"
+                className="btn btn--primary"
+                onClick={next}
+                {...(reduce ? {} : { whileHover: { y: -2 }, whileTap: { scale: 0.97 } })}
+              >
+                {state.step === 6 ? "Enviar diagnóstico" : "Continuar"}
+                {state.step === 6 ? <Check aria-hidden="true" /> : <ArrowRight aria-hidden="true" />}
+              </motion.button>
+            </div>
           </div>
-        </div>
-      </nav>
+        </nav>
       )}
 
-      {toast && (
-        <div className="toast show">
-          <Check aria-hidden="true" />
-          {toast}
-        </div>
+      {reduce ? (
+        toast && (
+          <div className="toast show">
+            <Check aria-hidden="true" />
+            {toast}
+          </div>
+        )
+      ) : (
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              key="toast"
+              className="toast"
+              initial={{ x: "-50%", y: 80, opacity: 0 }}
+              animate={{ x: "-50%", y: 0, opacity: 1 }}
+              exit={{ x: "-50%", y: 80, opacity: 0 }}
+              transition={{ duration: 0.4, ease: EASE }}
+            >
+              <Check aria-hidden="true" />
+              {toast}
+            </motion.div>
+          )}
+        </AnimatePresence>
       )}
     </div>
   );

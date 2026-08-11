@@ -74,16 +74,107 @@ export function LeadsTab() {
     ["Convertidos", n("cliente")],
   ];
 
+  /* Entrada de filas: solo opacidad (transform sobre <tr> es poco confiable en
+     varios navegadores; el stagger lo orquesta el <tbody>). */
+  const kpiContainer = reduce ? undefined : { hidden: {}, visible: { transition: { staggerChildren: 0.07 } } };
+  const kpiItem = reduce
+    ? undefined
+    : { hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.35, ease: ROW_EASE } } };
+  const tbodyVariants = reduce ? undefined : { hidden: {}, show: { transition: { staggerChildren: 0.04 } } };
+  const rowVariants = reduce
+    ? undefined
+    : { hidden: { opacity: 0 }, show: { opacity: 1, transition: { duration: 0.3, ease: ROW_EASE } } };
+
+  const tableMarkup = (
+    <div className="tbl-wrap">
+      <div className="table-scroll">
+        <table className="tbl">
+          <thead>
+            <tr>
+              <th>Empresa / Contacto</th>
+              <th>Servicios</th>
+              <th>Pauta</th>
+              <th>Estado</th>
+              <th>Recibido</th>
+            </tr>
+          </thead>
+          {/* El key re-aplica el stagger al cambiar filtro o búsqueda. */}
+          <motion.tbody
+            key={`${filtro}|${busqueda}`}
+            variants={tbodyVariants}
+            initial={reduce ? false : "hidden"}
+            animate={reduce ? undefined : "show"}
+          >
+            {filtered.map((l) => {
+              const d = l.data;
+              const svc =
+                d.servicios.slice(0, 2).join(", ") +
+                (d.servicios.length > 2 ? ` +${d.servicios.length - 2}` : "");
+              return (
+                <motion.tr
+                  key={l.ref}
+                  onClick={() => setOpenRef(l.ref)}
+                  variants={rowVariants}
+                  initial={reduce ? false : "hidden"}
+                  animate={reduce ? undefined : "show"}
+                >
+                  <td>
+                    <b>{d.empresa || "Sin empresa"}</b>
+                    <small>
+                      {d.nombre || "Sin nombre"}, {d.email || "sin email"}
+                    </small>
+                  </td>
+                  <td>
+                    <small>{svc || "Sin datos"}</small>
+                  </td>
+                  <td>
+                    <small>{PRESUPUESTO[d.presupuesto]?.txt ?? "Sin datos"}</small>
+                  </td>
+                  <td>
+                    <span className={`tag tag--${l.estado}`}>{ESTADOS[l.estado] || l.estado}</span>
+                  </td>
+                  <td>
+                    <small>
+                      {new Date(l.creado).toLocaleDateString("es-AR", {
+                        day: "2-digit",
+                        month: "short",
+                        hour: "2-digit",
+                        minute: "2-digit",
+                      })}
+                    </small>
+                  </td>
+                </motion.tr>
+              );
+            })}
+          </motion.tbody>
+        </table>
+      </div>
+    </div>
+  );
+
+  const emptyMarkup = (
+    <div className="empty">
+      <Inbox aria-hidden="true" style={{ display: "block" }} />
+      <h3>Todavía no hay formularios recibidos</h3>
+      <p>Cuando alguien complete el formulario del sitio aparece acá con todo su detalle y su estado de seguimiento.</p>
+    </div>
+  );
+
   return (
     <div className="tab-panel on">
-      <div className="kpi-grid">
+      <motion.div
+        className="kpi-grid"
+        variants={kpiContainer}
+        initial={reduce ? false : "hidden"}
+        animate={reduce ? undefined : "visible"}
+      >
         {kpis.map(([t, v, accent]) => (
-          <div className={`kpi${accent ? " kpi--accent" : ""}`} key={t}>
+          <motion.div className={`kpi${accent ? " kpi--accent" : ""}`} key={t} variants={reduce ? undefined : kpiItem}>
             <b>{v}</b>
             <span>{t}</span>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
 
       <div className="panel__tools">
         <input
@@ -110,82 +201,24 @@ export function LeadsTab() {
         </button>
       </div>
 
-      {filtered.length ? (
-        <div className="tbl-wrap">
-          <div className="table-scroll">
-            <table className="tbl">
-              <thead>
-                <tr>
-                  <th>Empresa / Contacto</th>
-                  <th>Servicios</th>
-                  <th>Pauta</th>
-                  <th>Estado</th>
-                  <th>Recibido</th>
-                </tr>
-              </thead>
-              {/* El key re-aplica el stagger al cambiar filtro o búsqueda. */}
-              <motion.tbody
-                key={`${filtro}|${busqueda}`}
-                initial="hidden"
-                animate="show"
-                variants={reduce ? undefined : { hidden: {}, show: { transition: { staggerChildren: 0.04 } } }}
-              >
-                {filtered.map((l) => {
-                  const d = l.data;
-                  const svc =
-                    d.servicios.slice(0, 2).join(", ") +
-                    (d.servicios.length > 2 ? ` +${d.servicios.length - 2}` : "");
-                  return (
-                    <motion.tr
-                      key={l.ref}
-                      onClick={() => setOpenRef(l.ref)}
-                      variants={
-                        reduce
-                          ? undefined
-                          : {
-                              hidden: { opacity: 0, y: 8 },
-                              show: { opacity: 1, y: 0, transition: { duration: 0.3, ease: ROW_EASE } },
-                            }
-                      }
-                    >
-                      <td>
-                        <b>{d.empresa || "Sin empresa"}</b>
-                        <small>
-                          {d.nombre || "Sin nombre"}, {d.email || "sin email"}
-                        </small>
-                      </td>
-                      <td>
-                        <small>{svc || "Sin datos"}</small>
-                      </td>
-                      <td>
-                        <small>{PRESUPUESTO[d.presupuesto]?.txt ?? "Sin datos"}</small>
-                      </td>
-                      <td>
-                        <span className={`tag tag--${l.estado}`}>{ESTADOS[l.estado] || l.estado}</span>
-                      </td>
-                      <td>
-                        <small>
-                          {new Date(l.creado).toLocaleDateString("es-AR", {
-                            day: "2-digit",
-                            month: "short",
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </small>
-                      </td>
-                    </motion.tr>
-                  );
-                })}
-              </motion.tbody>
-            </table>
-          </div>
-        </div>
+      {reduce ? (
+        filtered.length ? (
+          tableMarkup
+        ) : (
+          emptyMarkup
+        )
       ) : (
-        <div className="empty">
-          <Inbox aria-hidden="true" style={{ display: "block" }} />
-          <h3>Todavía no hay formularios recibidos</h3>
-          <p>Cuando alguien complete el formulario del sitio aparece acá con todo su detalle y su estado de seguimiento.</p>
-        </div>
+        <AnimatePresence mode="wait">
+          {filtered.length ? (
+            <motion.div key="table" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+              {tableMarkup}
+            </motion.div>
+          ) : (
+            <motion.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
+              {emptyMarkup}
+            </motion.div>
+          )}
+        </AnimatePresence>
       )}
 
       <AnimatePresence>{openLead && <LeadDrawer lead={openLead} onClose={close} onChange={reload} />}</AnimatePresence>

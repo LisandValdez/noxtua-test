@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ClipboardCheck, LogOut, Users } from "lucide-react";
 import { Gate } from "./Gate";
 import { LeadsTab } from "./LeadsTab";
@@ -9,9 +10,12 @@ import { KEYS, Store } from "../../data/storage";
 
 type Tab = "leads" | "onboarding";
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 export function PanelView() {
   const [authed, setAuthed] = useState(() => Store.get<string>(KEYS.auth, "0") === "1");
   const [tab, setTab] = useState<Tab>("leads");
+  const reduce = useReducedMotion();
 
   /* Contadores de las pestañas. El de Onboarding refleja el progreso
      guardado en el checklist: completados/total. */
@@ -34,9 +38,47 @@ export function PanelView() {
     setAuthed(false);
   };
 
-  if (!authed) return <Gate onUnlock={unlock} />;
+  const underline = (active: boolean) =>
+    active &&
+    (reduce ? (
+      <span className="tab-underline" aria-hidden="true" />
+    ) : (
+      <motion.span layoutId="tab-underline" className="tab-underline" aria-hidden="true" />
+    ));
 
-  return (
+  const tabContent = reduce ? (
+    tab === "leads" ? (
+      <LeadsTab />
+    ) : (
+      <OnboardingTab />
+    )
+  ) : (
+    <AnimatePresence mode="wait">
+      {tab === "leads" ? (
+        <motion.div
+          key="leads"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.28, ease: EASE }}
+        >
+          <LeadsTab />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="onboarding"
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.28, ease: EASE }}
+        >
+          <OnboardingTab />
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+
+  const panel = (
     <div className="app">
       <header className="app__bar">
         <div className="app__bar-in">
@@ -52,7 +94,12 @@ export function PanelView() {
 
       <div className="app__body">
         <div className="app__wrap">
-          <div className="panel__bar">
+          <motion.div
+            className="panel__bar"
+            initial={reduce ? false : { opacity: 0, y: 10 }}
+            animate={reduce ? undefined : { opacity: 1, y: 0 }}
+            transition={reduce ? undefined : { duration: 0.4, ease: EASE }}
+          >
             <h1 className="h-md" style={{ margin: 0 }}>
               Panel interno
             </h1>
@@ -60,7 +107,7 @@ export function PanelView() {
               <LogOut aria-hidden="true" />
               Salir
             </button>
-          </div>
+          </motion.div>
 
           <nav className="tabs" aria-label="Secciones del panel">
             <button
@@ -72,6 +119,7 @@ export function PanelView() {
               <Users size={16} aria-hidden="true" />
               Leads
               <span className="app__count">{leadsCount}</span>
+              {underline(tab === "leads")}
             </button>
             <button
               type="button"
@@ -82,12 +130,41 @@ export function PanelView() {
               <ClipboardCheck size={16} aria-hidden="true" />
               Onboarding
               <span className="app__count">{onboardingCount}</span>
+              {underline(tab === "onboarding")}
             </button>
           </nav>
 
-          {tab === "leads" ? <LeadsTab /> : <OnboardingTab />}
+          {tabContent}
         </div>
       </div>
     </div>
+  );
+
+  if (reduce) return !authed ? <Gate onUnlock={unlock} /> : panel;
+
+  return (
+    <AnimatePresence mode="wait">
+      {!authed ? (
+        <motion.div
+          key="gate"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0, scale: 0.98 }}
+          transition={{ duration: 0.28, ease: EASE }}
+        >
+          <Gate onUnlock={unlock} />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="panel"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3, ease: EASE }}
+        >
+          {panel}
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

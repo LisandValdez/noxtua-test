@@ -1,12 +1,19 @@
 import { useState } from "react";
+import { motion, useReducedMotion } from "framer-motion";
 import { Lock } from "lucide-react";
 
 /* Clave del panel interno. La verificación manual de la Task 14 usa este valor. */
 export const GATE_KEY = "noxtua2026";
 
+const EASE = [0.22, 1, 0.36, 1] as const;
+
 export function Gate({ onUnlock }: { onUnlock: () => void }) {
+  const reduce = useReducedMotion();
   const [pin, setPin] = useState("");
   const [err, setErr] = useState(false);
+  /* Contador de intentos fallidos: fuerza a re-animar el shake aunque el error
+     se repita consecutivamente (cambia levemente la amplitud). */
+  const [attempt, setAttempt] = useState(0);
 
   const tryOpen = () => {
     if (pin === GATE_KEY) {
@@ -14,13 +21,27 @@ export function Gate({ onUnlock }: { onUnlock: () => void }) {
       onUnlock();
     } else {
       setErr(true);
+      setAttempt((a) => a + 1);
       setPin("");
     }
   };
 
+  const amp = 6 + (attempt % 3) * 2;
+
   return (
     <div className="gate">
-      <div className="gate__card">
+      <motion.div
+        className="gate__card"
+        initial={reduce ? false : { opacity: 0, y: 22 }}
+        animate={
+          reduce
+            ? undefined
+            : err
+              ? { opacity: 1, y: 0, x: [0, -amp, amp, -amp * 0.8, amp * 0.8, 0] }
+              : { opacity: 1, y: 0, x: 0 }
+        }
+        transition={reduce ? undefined : err ? { duration: 0.4, ease: "easeOut" } : { duration: 0.45, ease: EASE }}
+      >
         <span className="eyebrow no-rule">Acceso restringido</span>
         <h2>Panel de NOXTUA</h2>
         <p className="body-muted">Ingresá la clave del equipo para ver los diagnósticos.</p>
@@ -45,7 +66,7 @@ export function Gate({ onUnlock }: { onUnlock: () => void }) {
           <Lock aria-hidden="true" />
           Ingresar
         </button>
-      </div>
+      </motion.div>
     </div>
   );
 }

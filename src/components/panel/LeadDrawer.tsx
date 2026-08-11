@@ -1,12 +1,12 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState, type ReactNode } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { Check, Trash2, X } from "lucide-react";
 import { removeLead, setEstado } from "../../data/leads";
 import { PRESUPUESTO } from "../../data/briefOptions";
 import { ESTADOS, type Estado, type LeadRecord } from "../../data/types";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
-const LINK_STYLE: CSSProperties = { color: "var(--accent)" };
+const LINK_STYLE = { color: "var(--accent)" } as const;
 
 /** Chips de una lista de opciones (1:1 del original: `<span class="chip">`). */
 function chips(a: string[] | undefined): ReactNode {
@@ -85,6 +85,188 @@ export function LeadDrawer({ lead, onClose, onChange }: { lead: LeadRecord; onCl
     }
   };
 
+  /* Secciones del detalle — 1:1 del renderDrawer() original. */
+  const sections: [string, [string, ReactNode][]][] = [
+    [
+      "Contacto",
+      [
+        ["Persona", d.nombre],
+        ["Rol", d.cargo],
+        [
+          "Email",
+          d.email ? (
+            <a href={`mailto:${d.email}`} style={LINK_STYLE}>
+              {d.email}
+            </a>
+          ) : (
+            ""
+          ),
+        ],
+        [
+          "Teléfono",
+          d.telefono ? (
+            <a
+              href={`https://wa.me/${d.telefono.replace(/\D/g, "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={LINK_STYLE}
+            >
+              {d.telefono}
+            </a>
+          ) : (
+            ""
+          ),
+        ],
+        [
+          "Sitio",
+          d.sitio ? (
+            <a
+              href={/^https?:/.test(d.sitio) ? d.sitio : `https://${d.sitio}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={LINK_STYLE}
+            >
+              {d.sitio}
+            </a>
+          ) : (
+            ""
+          ),
+        ],
+        ["Cómo nos conoció", d.como_conociste],
+      ],
+    ],
+    [
+      "Negocio",
+      [
+        ["Rubro", d.rubro],
+        ["Descripción", d.descripcion],
+        ["Competencia", d.competencia],
+        ["Cliente ideal", d.cliente_ideal],
+      ],
+    ],
+    [
+      "Interés",
+      [
+        ["Servicios", chips(d.servicios)],
+        ["Otro", d.servicios_otro],
+        ["Objetivos", chips(d.objetivos)],
+      ],
+    ],
+    [
+      "Situación actual",
+      [
+        ["Plataformas", chips(d.plataformas)],
+        ["Pauta actual", d.pauta_actual],
+        ["Quién lo maneja", d.quien_marketing],
+        ["Principal frustración", d.frustracion],
+      ],
+    ],
+    [
+      "Comercial",
+      [
+        ["Inversión en pauta", PRESUPUESTO[d.presupuesto]?.txt ?? ""],
+        ["Horizonte", d.plazo],
+        ["Involucramiento", d.involucramiento],
+        ["Restricciones", d.restricciones],
+        ["Preferencia horaria", d.cuando],
+      ],
+    ],
+    [
+      "Operativo",
+      [
+        ["Accesos disponibles", chips(d.accesos)],
+        ["Material de marca", chips(d.materiales)],
+        ["Comentarios", d.extra],
+      ],
+    ],
+  ];
+
+  const secContainer = reduce
+    ? undefined
+    : { hidden: {}, visible: { transition: { staggerChildren: 0.05 } } };
+  const secItem = reduce
+    ? undefined
+    : { hidden: { opacity: 0, y: 10 }, visible: { opacity: 1, y: 0, transition: { duration: 0.3, ease: "easeOut" } } };
+
+  const reduceBody = (
+    <div className="drawer__body">
+      {sections.map(([title, rows]) => (
+        <Section key={title} title={title} rows={rows} />
+      ))}
+    </div>
+  );
+
+  const motionBody = (
+    <motion.div
+      className="drawer__body"
+      variants={secContainer}
+      initial="hidden"
+      animate="visible"
+    >
+      {sections.map(([title, rows]) => (
+        <motion.div key={title} variants={secItem}>
+          <Section title={title} rows={rows} />
+        </motion.div>
+      ))}
+    </motion.div>
+  );
+
+  const foot = (
+    <div className="drawer__foot">
+      <span className="tiny body-muted" style={{ marginRight: "auto" }}>
+        Estado
+      </span>
+      {(Object.keys(ESTADOS) as Estado[])
+        .filter((k) => k !== "parcial")
+        .map((k) => (
+          <button
+            type="button"
+            key={k}
+            className={`filter-btn${lead.estado === k ? " on" : ""}`}
+            onClick={() => changeEstado(k)}
+          >
+            {ESTADOS[k]}
+          </button>
+        ))}
+      <button type="button" className="icon-btn" onClick={eliminar} aria-label="Eliminar" title="Eliminar">
+        <Trash2 aria-hidden="true" />
+      </button>
+    </div>
+  );
+
+  const head = (
+    <div className="drawer__head">
+      <div>
+        <h3>{d.empresa || "Sin empresa"}</h3>
+        <span>
+          {lead.ref}, recibido el {new Date(lead.creado).toLocaleString("es-AR")}
+        </span>
+      </div>
+      <button type="button" className="icon-btn" onClick={onClose} aria-label="Cerrar">
+        <X aria-hidden="true" />
+      </button>
+    </div>
+  );
+
+  if (reduce) {
+    return (
+      <div className="drawer open" role="dialog" aria-modal="true" aria-label="Detalle del diagnóstico">
+        <div className="drawer__scrim" onClick={onClose} />
+        <div className="drawer__panel">
+          {head}
+          {reduceBody}
+          {foot}
+        </div>
+        {toast && (
+          <div className="toast show">
+            <Check aria-hidden="true" />
+            {toast}
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <motion.div
       className="drawer open"
@@ -92,159 +274,38 @@ export function LeadDrawer({ lead, onClose, onChange }: { lead: LeadRecord; onCl
       aria-modal="true"
       aria-label="Detalle del diagnóstico"
       style={{ transition: "none" }}
-      initial="hidden"
-      animate="visible"
-      exit="hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
     >
-      <motion.div
-        className="drawer__scrim"
-        onClick={onClose}
-        variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-        transition={{ duration: 0.25 }}
-      />
+      <div className="drawer__scrim" onClick={onClose} />
       <motion.div
         className="drawer__panel"
-        variants={{
-          hidden: reduce ? { opacity: 0 } : { x: 60, opacity: 0 },
-          visible: reduce ? { opacity: 1 } : { x: 0, opacity: 1 },
-        }}
-        transition={{ duration: 0.32, ease: EASE }}
+        initial={{ x: "100%" }}
+        animate={{ x: 0 }}
+        exit={{ x: "100%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
       >
-        <div className="drawer__head">
-          <div>
-            <h3>{d.empresa || "Sin empresa"}</h3>
-            <span>
-              {lead.ref}, recibido el {new Date(lead.creado).toLocaleString("es-AR")}
-            </span>
-          </div>
-          <button type="button" className="icon-btn" onClick={onClose} aria-label="Cerrar">
-            <X aria-hidden="true" />
-          </button>
-        </div>
-
-        <div className="drawer__body">
-          <Section
-            title="Contacto"
-            rows={[
-              ["Persona", d.nombre],
-              ["Rol", d.cargo],
-              [
-                "Email",
-                d.email ? (
-                  <a href={`mailto:${d.email}`} style={LINK_STYLE}>
-                    {d.email}
-                  </a>
-                ) : (
-                  ""
-                ),
-              ],
-              [
-                "Teléfono",
-                d.telefono ? (
-                  <a
-                    href={`https://wa.me/${d.telefono.replace(/\D/g, "")}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={LINK_STYLE}
-                  >
-                    {d.telefono}
-                  </a>
-                ) : (
-                  ""
-                ),
-              ],
-              [
-                "Sitio",
-                d.sitio ? (
-                  <a
-                    href={/^https?:/.test(d.sitio) ? d.sitio : `https://${d.sitio}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={LINK_STYLE}
-                  >
-                    {d.sitio}
-                  </a>
-                ) : (
-                  ""
-                ),
-              ],
-              ["Cómo nos conoció", d.como_conociste],
-            ]}
-          />
-          <Section
-            title="Negocio"
-            rows={[
-              ["Rubro", d.rubro],
-              ["Descripción", d.descripcion],
-              ["Competencia", d.competencia],
-              ["Cliente ideal", d.cliente_ideal],
-            ]}
-          />
-          <Section
-            title="Interés"
-            rows={[
-              ["Servicios", chips(d.servicios)],
-              ["Otro", d.servicios_otro],
-              ["Objetivos", chips(d.objetivos)],
-            ]}
-          />
-          <Section
-            title="Situación actual"
-            rows={[
-              ["Plataformas", chips(d.plataformas)],
-              ["Pauta actual", d.pauta_actual],
-              ["Quién lo maneja", d.quien_marketing],
-              ["Principal frustración", d.frustracion],
-            ]}
-          />
-          <Section
-            title="Comercial"
-            rows={[
-              ["Inversión en pauta", PRESUPUESTO[d.presupuesto]?.txt ?? ""],
-              ["Horizonte", d.plazo],
-              ["Involucramiento", d.involucramiento],
-              ["Restricciones", d.restricciones],
-              ["Preferencia horaria", d.cuando],
-            ]}
-          />
-          <Section
-            title="Operativo"
-            rows={[
-              ["Accesos disponibles", chips(d.accesos)],
-              ["Material de marca", chips(d.materiales)],
-              ["Comentarios", d.extra],
-            ]}
-          />
-        </div>
-
-        <div className="drawer__foot">
-          <span className="tiny body-muted" style={{ marginRight: "auto" }}>
-            Estado
-          </span>
-          {(Object.keys(ESTADOS) as Estado[])
-            .filter((k) => k !== "parcial")
-            .map((k) => (
-              <button
-                type="button"
-                key={k}
-                className={`filter-btn${lead.estado === k ? " on" : ""}`}
-                onClick={() => changeEstado(k)}
-              >
-                {ESTADOS[k]}
-              </button>
-            ))}
-          <button type="button" className="icon-btn" onClick={eliminar} aria-label="Eliminar" title="Eliminar">
-            <Trash2 aria-hidden="true" />
-          </button>
-        </div>
+        {head}
+        {motionBody}
+        {foot}
       </motion.div>
-
-      {toast && (
-        <div className="toast show">
-          <Check aria-hidden="true" />
-          {toast}
-        </div>
-      )}
+      <AnimatePresence>
+        {toast && (
+          <motion.div
+            key="toast"
+            className="toast"
+            initial={{ x: "-50%", y: 80, opacity: 0 }}
+            animate={{ x: "-50%", y: 0, opacity: 1 }}
+            exit={{ x: "-50%", y: 80, opacity: 0 }}
+            transition={{ duration: 0.3, ease: EASE }}
+          >
+            <Check aria-hidden="true" />
+            {toast}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

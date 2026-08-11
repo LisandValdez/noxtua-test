@@ -47,7 +47,6 @@
   display: block; height: 100%; width: 0;
   background: linear-gradient(90deg, var(--accent-2), var(--accent-3));
   box-shadow: 0 0 12px rgba(var(--c-accent), 0.6);
-  transition: width 0.85s var(--ease-out);
 }
 
 .app__body { flex: 1; padding: clamp(34px, 6vw, 68px) var(--gutter) clamp(120px, 14vw, 160px); }
@@ -84,6 +83,7 @@
 }
 .steps-rail::-webkit-scrollbar { display: none; }
 .steps-rail__item {
+  position: relative;
   display: flex; align-items: center; gap: 9px;
   padding: 8px 14px; border-radius: 100px;
   border: 1px solid var(--line);
@@ -106,6 +106,11 @@
   font-weight: 550;
 }
 .steps-rail__item.current b { background: rgba(var(--c-ink), 0.22); color: var(--ink); }
+/* Indicador del paso activo (motion layoutId `step-pill`) */
+.steps-rail__pill {
+  position: absolute; left: 10px; right: 10px; bottom: -3px; height: 2px;
+  border-radius: 2px; background: var(--accent);
+}
 
 /* ============================================================
    Pasos
@@ -251,22 +256,46 @@
 .budget__top small, .budget__val small { font-family: var(--font-body); font-size: 0.9rem; font-weight: 400; color: var(--muted-2); letter-spacing: 0; }
 .budget__band { font-size: 0.85rem; color: var(--accent); margin-bottom: 22px; font-weight: 450; }
 
-/* Riel del slider (custom, para la versión con `.budget__fill`) */
+/* Slider custom: el input nativo queda invisible encima (interacción +
+   accesibilidad) y el relleno `.budget__fill` se anima con Framer Motion. */
+.budget__slider { position: relative; height: 28px; margin: 6px 0 14px; }
+.budget__slider input[type="range"] {
+  position: absolute; inset: 0; width: 100%; height: 100%; margin: 0;
+  -webkit-appearance: none; appearance: none;
+  background: transparent; outline: none; cursor: pointer; z-index: 2;
+}
+.budget__slider input[type="range"]::-webkit-slider-runnable-track { background: transparent; border: 0; }
+.budget__slider input[type="range"]::-moz-range-track { background: transparent; border: 0; }
+.budget__slider input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: linear-gradient(140deg, #fff, var(--accent));
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--accent), 0 6px 18px -4px rgba(var(--c-accent), 0.8);
+  cursor: grab;
+  transition: transform var(--t-fast) var(--ease);
+}
+.budget__slider input[type="range"]::-webkit-slider-thumb:hover { transform: scale(1.15); }
+.budget__slider input[type="range"]::-webkit-slider-thumb:active { cursor: grabbing; transform: scale(1.05); }
+.budget__slider input[type="range"]::-moz-range-thumb {
+  width: 20px; height: 20px; border-radius: 50%;
+  background: linear-gradient(140deg, #fff, var(--accent));
+  border: 2px solid var(--bg);
+  box-shadow: 0 0 0 1px var(--accent); cursor: grab;
+}
 .budget__track {
-  position: relative;
+  position: absolute; left: 0; right: 0; top: 50%; transform: translateY(-50%);
   height: 5px; border-radius: 100px;
   background: rgba(var(--c-text), 0.12);
-  margin: 6px 0 14px;
-  cursor: pointer;
+  pointer-events: none; z-index: 1;
 }
-/* Relleno accionado por var(--pct) — Task 12 lo anima con Framer Motion */
+/* Relleno animado con Framer Motion (spring) — reduce → estático */
 .budget__fill {
   display: block; height: 100%;
-  width: var(--pct, 30%);
+  width: 0;
   border-radius: 100px;
   background: linear-gradient(90deg, var(--accent), var(--accent-3));
   box-shadow: 0 0 12px rgba(var(--c-accent), 0.55);
-  transition: width 0.85s var(--ease-out);
 }
 
 /* Variante nativa (input range real, mismo mecanismo `--pct`) */
@@ -318,9 +347,7 @@ input[type="range"]::-moz-range-thumb {
   background: linear-gradient(140deg, var(--accent-3), var(--accent-2));
   display: grid; place-items: center;
   box-shadow: 0 0 0 8px rgba(var(--c-accent), 0.1), 0 24px 60px -20px rgba(var(--c-accent), 0.7);
-  animation: popIn 0.8s var(--ease-out) both;
 }
-@keyframes popIn { from { opacity: 0; transform: scale(0.6); } to { opacity: 1; transform: none; } }
 .done__icon svg, .done__mark svg { width: 32px; height: 32px; color: var(--ink); stroke-width: 2.6; }
 .done h2 { font-size: clamp(2rem, 4.6vw, 3rem); margin-bottom: 18px; }
 .done > p { color: var(--muted); font-size: 1.03rem; line-height: 1.68; max-width: 56ch; margin: 0 auto 34px; font-weight: 350; }
@@ -516,13 +543,12 @@ input[type="range"]::-moz-range-thumb {
 
 /* Barra de progreso genérica */
 .bar { height: 4px; border-radius: 100px; background: rgba(var(--c-text), 0.1); overflow: hidden; }
-.bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.6s var(--ease-out); }
+.bar i { display: block; height: 100%; width: 0; background: var(--accent); }
 .check-phase__bar { width: 64px; height: 4px; border-radius: 100px; background: rgba(var(--c-text), 0.1); overflow: hidden; flex-shrink: 0; }
-.check-phase__bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 0.6s var(--ease-out); }
+.check-phase__bar i { display: block; height: 100%; width: 0; background: var(--accent); }
 
 .check-phase__cnt { font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted-2); flex-shrink: 0; min-width: 34px; text-align: right; }
-.check-phase__body { display: grid; grid-template-rows: 0fr; transition: grid-template-rows var(--t) var(--ease); }
-.check-phase.open .check-phase__body { grid-template-rows: 1fr; }
+.check-phase__body { overflow: hidden; }
 .check-phase__body > div { overflow: hidden; }
 .check-list { padding: 4px 20px 20px; display: flex; flex-direction: column; gap: 2px; }
 .check-item {
@@ -558,12 +584,18 @@ input[type="range"]::-moz-range-thumb {
 .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 28px; overflow-x: auto; scrollbar-width: none; }
 .tabs::-webkit-scrollbar { display: none; }
 .tab {
+  position: relative;
   padding: 12px 18px; font-size: 0.9rem; color: var(--muted-2); white-space: nowrap;
   border-bottom: 2px solid transparent; margin-bottom: -1px;
   transition: all var(--t-fast) var(--ease);
 }
 .tab:hover { color: var(--text); }
-.tab.on { color: var(--accent); border-bottom-color: var(--accent); }
+.tab.on { color: var(--accent); }
+/* Subrayado del tab activo (motion layoutId `tab-underline`) */
+.tab-underline {
+  position: absolute; left: 10px; right: 10px; bottom: -2px; height: 2px;
+  border-radius: 2px; background: var(--accent);
+}
 .tab-panel { display: none; }
 .tab-panel.on { display: block; animation: viewIn 0.45s var(--ease-out) both; }
 @keyframes viewIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
