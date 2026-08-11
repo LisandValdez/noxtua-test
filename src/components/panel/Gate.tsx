@@ -61,10 +61,14 @@ export function Gate({ onUnlock }: { onUnlock: () => void }) {
             placeholder="••••••••"
           />
         </div>
-        {err && <span className="gate__err show">Código incorrecto</span>}
+        {err && (
+          <span className="gate__err show" role="alert">
+            Esa clave no es correcta. Probá de nuevo.
+          </span>
+        )}
         <button type="button" className="btn btn--primary btn--block" onClick={tryOpen}>
           <Lock aria-hidden="true" />
-          Ingresar
+          Entrar
         </button>
       </motion.div>
     </div>

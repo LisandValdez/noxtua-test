@@ -29,6 +29,7 @@ export function OptionCard({
   d,
   checked,
   radio = false,
+  name,
   onChange,
 }: {
   i?: string;
@@ -36,6 +37,7 @@ export function OptionCard({
   d?: string;
   checked: boolean;
   radio?: boolean;
+  name?: string;
   onChange: () => void;
 }) {
   const reduce = useReducedMotion();
@@ -44,7 +46,7 @@ export function OptionCard({
       className={`opt${radio ? " opt--radio" : ""}${checked ? " is-on" : ""}`}
       {...(reduce ? {} : { whileTap: { scale: 0.98 } })}
     >
-      <input type={radio ? "radio" : "checkbox"} checked={checked} onChange={onChange} />
+      <input type={radio ? "radio" : "checkbox"} name={name} checked={checked} onChange={onChange} />
       <span className="opt__box">
         <Check aria-hidden="true" />
       </span>
@@ -73,11 +75,13 @@ export function Pill({ t, checked, onChange }: { t: string; checked: boolean; on
 
 /** Campo de formulario: label, control y mensaje de error. */
 export function Field({
+  id,
   label,
   error,
   children,
   required = false,
 }: {
+  id: string;
   label?: string;
   error?: string;
   children: ReactNode;
@@ -86,7 +90,7 @@ export function Field({
   return (
     <div className={`field${error ? " err" : ""}`}>
       {label && (
-        <label>
+        <label htmlFor={id}>
           {label}
           {required && <span className="req">*</span>}
         </label>

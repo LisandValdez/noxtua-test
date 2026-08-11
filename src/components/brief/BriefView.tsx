@@ -40,6 +40,27 @@ const STEP_HEADS: { title: string; subtitle: string }[] = [
   },
 ];
 
+/* Ids canónicos 1:1 de los inputs del sitio original (index 1.html): cada control
+   del brief usa el mismo id que su homólogo del HTML de origen. */
+const FIELD_IDS: Partial<Record<keyof LeadData, string>> = {
+  servicios_otro: "f_svc_other",
+  empresa: "f_empresa",
+  rubro: "f_rubro",
+  nombre: "f_nombre",
+  email: "f_email",
+  sitio: "f_sitio",
+  cargo: "f_cargo",
+  descripcion: "f_descripcion",
+  quien_marketing: "f_quien",
+  frustracion: "f_frustra",
+  cliente_ideal: "f_cliente",
+  competencia: "f_competencia",
+  restricciones: "f_no",
+  telefono: "f_tel",
+  como_conociste: "f_como",
+  extra: "f_extra",
+};
+
 /** Restaura el borrador guardado (nx_draft). Tipado explícito porque
  *  `Store.get(KEYS.draft, null)` infiere T = null bajo TS strict. */
 function hydrateDraft(): BriefState {
@@ -96,8 +117,10 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
   const backTo = (n: number) => dispatch({ type: "HYDRATE", state: { step: n, values: state.values, errors: {} } });
 
   const next = () => {
-    /* Guardado parcial: una vez por sesión, al salir del paso 2. */
-    if (state.step === 2 && !sentPartial.current) {
+    /* Guardado parcial: una vez por sesión, al salir del paso 2 y solo si valida
+       (el original validaba el paso antes de guardar). Un paso inválido no consume
+       el parcial de la sesión. */
+    if (state.step === 2 && !sentPartial.current && Object.keys(validateStep(2, state.values)).length === 0) {
       sentPartial.current = true;
       onPartial(buildRecord(ref.current, "parcial", state.values, location.hostname));
     }
@@ -168,6 +191,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
                   i={o.i}
                   t={o.t}
                   d={o.d}
+                  name={c.key}
                   checked={state.values[c.key].includes(o.t)}
                   onChange={() => dispatch({ type: "TOGGLE", key: c.key, value: o.t })}
                 />
@@ -186,6 +210,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
                   radio
                   t={o.t}
                   d={o.d}
+                  name={c.key}
                   checked={state.values[c.key] === o.t}
                   onChange={() => dispatch({ type: "SET", key: c.key, value: o.t })}
                 />
@@ -205,11 +230,13 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
             {groupErr(c.key)}
           </motion.div>
         );
-      case "input":
+      case "input": {
+        const id = FIELD_IDS[c.key] ?? c.key;
         return (
           <motion.div className="fieldset" key={i} {...wrap}>
-            <Field label={c.label} error={state.errors[c.key]}>
+            <Field id={id} label={c.label} error={state.errors[c.key]}>
               <input
+                id={id}
                 type="text"
                 value={String(state.values[c.key])}
                 placeholder={c.placeholder}
@@ -218,11 +245,14 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
             </Field>
           </motion.div>
         );
-      case "textarea":
+      }
+      case "textarea": {
+        const id = FIELD_IDS[c.key] ?? c.key;
         return (
           <motion.div className="fieldset" key={i} {...wrap}>
-            <Field label={c.label} error={state.errors[c.key]}>
+            <Field id={id} label={c.label} error={state.errors[c.key]}>
               <textarea
+                id={id}
                 value={String(state.values[c.key])}
                 placeholder={c.placeholder}
                 onChange={(e) => dispatch({ type: "SET", key: c.key, value: e.target.value })}
@@ -230,11 +260,14 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
             </Field>
           </motion.div>
         );
-      case "select":
+      }
+      case "select": {
+        const id = FIELD_IDS[c.key] ?? c.key;
         return (
           <motion.div className="fieldset" key={i} {...wrap}>
-            <Field label={c.label} error={state.errors[c.key]}>
+            <Field id={id} label={c.label} error={state.errors[c.key]}>
               <select
+                id={id}
                 value={String(state.values[c.key])}
                 onChange={(e) => dispatch({ type: "SET", key: c.key, value: e.target.value })}
               >
@@ -246,6 +279,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
             </Field>
           </motion.div>
         );
+      }
       case "check":
         return (
           <motion.div className="fieldset" key={i} {...wrap}>
