@@ -1,6 +1,6 @@
 import { useEffect, useReducer, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Check } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, CircleAlert } from "lucide-react";
 import { briefReducer, type BriefState } from "./briefReducer";
 import { STEPS, type Control } from "./steps";
 import { BudgetSlider, Field, OptionCard, Pill, StepHeader } from "./controls";
@@ -111,6 +111,15 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  /* Error visible del grupo de opciones (1:1 del texto de validateStep). */
+  const groupErr = (key: keyof LeadData) =>
+    state.errors[key] ? (
+      <span className="field__err mt-s" style={{ display: "flex" }}>
+        <CircleAlert aria-hidden="true" />
+        {state.errors[key]}
+      </span>
+    ) : null;
+
   const renderControl = (c: Control, i: number) => {
     const field = {
       initial: { opacity: 0, y: 14 },
@@ -133,6 +142,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
                 />
               ))}
             </div>
+            {groupErr(c.key)}
           </motion.div>
         );
       case "opt-radio":
@@ -150,6 +160,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
                 />
               ))}
             </div>
+            {groupErr(c.key)}
           </motion.div>
         );
       case "pills":
@@ -160,6 +171,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: () => void; onPar
                 <Pill key={o} t={o} checked={state.values[c.key].includes(o)} onChange={() => dispatch({ type: "TOGGLE", key: c.key, value: o })} />
               ))}
             </div>
+            {groupErr(c.key)}
           </motion.div>
         );
       case "input":
