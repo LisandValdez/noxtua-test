@@ -818,10 +818,17 @@ h1, h2, h3, h4, h5 {
 }
 .works-carousel__track {
   display: flex; width: max-content;
-  animation: works-slide 48s linear infinite;
+  animation: works-slide 50s linear infinite;
 }
 .works-carousel:hover .works-carousel__track { animation-play-state: paused; }
-.works-carousel__group { display: flex; gap: clamp(16px, 2vw, 24px); }
+.works-carousel__group {
+  --ws-gap: clamp(32px, 4vw, 56px);
+  display: flex; gap: var(--ws-gap);
+  /* El mismo gap como padding derecho: la costura entre el final del grupo 1 y
+     el inicio del grupo 2 (donde el track se repite al -50%) queda igual de
+     separada que entre cards adyacentes → loop sin salto de espaciado. */
+  padding-right: var(--ws-gap);
+}
 .works-carousel__cell { flex: 0 0 auto; width: min(420px, 78vw); }
 .works-carousel__cell .work { height: 100%; }
 
@@ -830,7 +837,7 @@ h1, h2, h3, h4, h5 {
 @media (prefers-reduced-motion: reduce) {
   .works-carousel { overflow: visible; -webkit-mask-image: none; mask-image: none; }
   .works-carousel__track { animation: none; flex-wrap: wrap; justify-content: center; }
-  .works-carousel__group { flex-wrap: wrap; justify-content: center; }
+  .works-carousel__group { flex-wrap: wrap; justify-content: center; padding-right: 0; }
   .works-carousel__group[aria-hidden="true"] { display: none; }
 }
 
