@@ -17,21 +17,19 @@ export const WA_DEFAULT_MSG = "Hola NOXTUA, me gustaría hacer una consulta.";
 /* ---------- Navegación ---------- */
 export const NAV_LINKS = [
   { label: "Servicios", href: "#servicios" },
-  { label: "Método", href: "#metodo" },
+  { label: "Método", href: "#comotrabajamos" },
   { label: "Planes", href: "#planes" },
   { label: "Trabajo", href: "#trabajo" },
-  { label: "Trabajos", href: "#/trabajos" },
   { label: "Equipo", href: "#equipo" },
 ] as const;
 
 export const NAV_LINKS_MOBILE = [
   { label: "Servicios", href: "#servicios", num: "01" },
-  { label: "Método", href: "#metodo", num: "02" },
+  { label: "Método", href: "#comotrabajamos", num: "02" },
   { label: "Planes", href: "#planes", num: "03" },
   { label: "Trabajo", href: "#trabajo", num: "04" },
-  { label: "Trabajos", href: "#/trabajos", num: "05" },
-  { label: "Equipo", href: "#equipo", num: "06" },
-  { label: "Preguntas", href: "#faq", num: "07" },
+  { label: "Equipo", href: "#equipo", num: "05" },
+  { label: "Preguntas", href: "#faq", num: "06" },
 ] as const;
 
 export const NAV_CTA = "Empezar el análisis";
@@ -483,10 +481,9 @@ export const FOOTER = {
   navTitle: "Navegación",
   nav: [
     { label: "Servicios", href: "#servicios" },
-    { label: "Método", href: "#metodo" },
+    { label: "Método", href: "#comotrabajamos" },
     { label: "Planes", href: "#planes" },
     { label: "Trabajo", href: "#trabajo" },
-    { label: "Trabajos", href: "#/trabajos" },
     { label: "Equipo", href: "#equipo" },
   ],
   contactTitle: "Contacto",
