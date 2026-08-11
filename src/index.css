@@ -408,7 +408,6 @@ h1, h2, h3, h4, h5 {
   position: absolute; inset: 0; z-index: 10;
   background: linear-gradient(180deg, rgba(3, 8, 26, 0.55) 0%, rgba(3, 8, 26, 0.78) 46%, rgba(3, 8, 26, 0.85) 100%);
 }
-.hero-3d { position: absolute; inset: 0; z-index: 20; pointer-events: none; }
 
 .hero__grid {
   position: relative; z-index: 30;

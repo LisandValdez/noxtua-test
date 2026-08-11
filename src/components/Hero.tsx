@@ -1,10 +1,7 @@
-import { lazy, Suspense, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { motion, useInView, useReducedMotion, type Variants } from "framer-motion";
 import { ArrowRight, CheckCircle2, Clock } from "lucide-react";
 import { HERO, RAIL } from "../data/content";
-import { useMediaQuery } from "../hooks/useMediaQuery";
-
-const ParticleField = lazy(() => import("./hero/ParticleField"));
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -15,10 +12,8 @@ const fadeUp = (delay: number): Variants => ({
 
 export function Hero() {
   const reduce = useReducedMotion();
-  const finePointer = useMediaQuery("(hover: hover) and (pointer: fine)");
   const initial = reduce ? false : "hidden";
 
-  const show3d = finePointer && !reduce;
   /* El video del hero se reproduce en todos los viewports; con reduced-motion se
      muestra la imagen estática (.hero__media-bg). */
   const showVideo = !reduce;
@@ -73,14 +68,7 @@ export function Hero() {
       {/* Capa 2 · velo de legibilidad */}
       <div className="hero__overlay" aria-hidden="true" />
 
-      {/* Capa 3 · partículas 3D (lazy, solo con puntero fino) */}
-      {show3d && (
-        <Suspense fallback={null}>
-          <ParticleField />
-        </Suspense>
-      )}
-
-      {/* Capa 4 · contenido */}
+      {/* Capa 3 · contenido */}
       <div className="container">
         <div className="hero__grid">
           <div>
