@@ -1,6 +1,7 @@
 import { useState, type ReactNode } from "react";
 import { ArrowLeft, ClipboardCheck, LogOut, Users } from "lucide-react";
 import { Gate } from "./Gate";
+import { LeadsTab } from "./LeadsTab";
 import { loadLeads } from "../../data/leads";
 import { CHECKLIST } from "../../data/checklist";
 import { KEYS, Store } from "../../data/storage";
@@ -77,18 +78,14 @@ export function PanelView() {
             </button>
           </nav>
 
-          {tab === "leads" ? (
-            <LeadsPlaceholder />
-          ) : (
-            <OnboardingPlaceholder />
-          )}
+          {tab === "leads" ? <LeadsTab /> : <OnboardingPlaceholder />}
         </div>
       </div>
     </div>
   );
 }
 
-/* Paneles placeholder: la Task 11 reemplaza el de Leads y la Task 12 el de Onboarding. */
+/* Panel placeholder: la Task 12 reemplaza el de Onboarding. */
 function PanelPlaceholder({ icon, title, copy }: { icon: ReactNode; title: string; copy: string }) {
   return (
     <div
@@ -109,16 +106,6 @@ function PanelPlaceholder({ icon, title, copy }: { icon: ReactNode; title: strin
         {copy}
       </p>
     </div>
-  );
-}
-
-function LeadsPlaceholder() {
-  return (
-    <PanelPlaceholder
-      icon={<Users size={38} aria-hidden="true" />}
-      title="Sección de leads"
-      copy="Acá vas a ver los formularios recibidos, con estado, filtros y exportación a CSV. Próximamente."
-    />
   );
 }
 
