@@ -1,7 +1,6 @@
-import { useEffect, useRef } from "react";
-import { motion, useInView, useReducedMotion, type Variants } from "framer-motion";
-import { ArrowRight, CheckCircle2, Clock } from "lucide-react";
-import { HERO, RAIL } from "../data/content";
+import { motion, useReducedMotion, type Variants } from "framer-motion";
+import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { HERO } from "../data/content";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -17,25 +16,6 @@ export function Hero() {
   /* El video del hero se reproduce en todos los viewports; con reduced-motion se
      muestra la imagen estática (.hero__media-bg). */
   const showVideo = !reduce;
-
-  const railRef = useRef<HTMLElement>(null);
-  const railInView = useInView(railRef, { amount: 0.25 });
-  const litDone = useRef(false);
-  const listRef = useRef<HTMLOListElement>(null);
-
-  useEffect(() => {
-    if (!railInView || litDone.current) return;
-    litDone.current = true;
-    const items = railRef.current?.querySelectorAll(".rail__item");
-    items?.forEach((it, i) => {
-      const t = reduce ? 0 : 260 + i * 240;
-      setTimeout(() => it.classList.add("lit"), t);
-    });
-    if (listRef.current) {
-      const t = reduce ? 0 : 320;
-      setTimeout(() => listRef.current!.style.setProperty("--rail-fill", "100%"), t);
-    }
-  }, [railInView, reduce]);
 
   return (
     <section className="hero" id="main">
@@ -121,50 +101,6 @@ export function Hero() {
               {HERO.note}
             </motion.p>
           </div>
-
-          {/* Capa 5 · riel de pasos */}
-          <motion.aside
-            ref={railRef}
-            className="rail"
-            aria-label={RAIL.ariaLabel}
-            variants={{
-              hidden: { opacity: 0, x: 64 },
-              visible: { opacity: 1, x: 0, transition: { duration: 0.85, ease: EASE, delay: 0.2 } },
-            }}
-            initial={initial}
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            <div className="rail__head">
-              <span className="rail__title">{RAIL.title}</span>
-              <span className="rail__live">
-                <span className="rail__dot" />
-                {RAIL.live}
-              </span>
-            </div>
-            <ol className="rail__list" ref={listRef}>
-              {RAIL.steps.map((s, i) => (
-                <motion.li
-                  key={s.num}
-                  className="rail__item"
-                  variants={fadeUp(i * 0.22)}
-                  initial={initial}
-                  whileInView="visible"
-                  viewport={{ once: true }}
-                >
-                  <span className="rail__node">{s.num}</span>
-                  <span>
-                    <span className="rail__label">{s.label}</span>
-                    <span className="rail__meta">{s.meta}</span>
-                  </span>
-                </motion.li>
-              ))}
-            </ol>
-            <div className="rail__foot">
-              <Clock aria-hidden="true" />
-              {RAIL.foot}
-            </div>
-          </motion.aside>
         </div>
       </div>
     </section>

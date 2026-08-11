@@ -412,9 +412,8 @@ h1, h2, h3, h4, h5 {
 .hero__grid {
   position: relative; z-index: 30;
   display: grid;
-  grid-template-columns: minmax(0, 1.24fr) minmax(0, 0.96fr);
-  gap: clamp(34px, 5vw, 64px);
-  align-items: start;
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 900px;
   width: 100%;
 }
 @media (min-width: 961px) {
@@ -456,80 +455,72 @@ h1, h2, h3, h4, h5 {
 }
 .stat span { font-size: 0.79rem; color: var(--muted-2); display: block; max-width: 16ch; line-height: 1.45; }
 
-/* Panel del hero: la firma visual, el riel de pasos */
-.rail {
+/* ============================================================
+   Cómo trabajamos · timeline horizontal de pasos
+   ============================================================ */
+.steps {
   position: relative;
-  background: linear-gradient(165deg, rgba(var(--c-s3), 0.9), rgba(var(--c-deep), 0.95));
+  background: linear-gradient(165deg, rgba(var(--c-s3), 0.8), rgba(var(--c-deep), 0.95));
   border: 1px solid var(--line-2);
   border-radius: var(--radius-lg);
-  padding: clamp(22px, 2.6vw, 30px);
-  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.85), 0 0 0 1px rgba(var(--c-accent), 0.06);
-  backdrop-filter: blur(14px);
+  padding: clamp(26px, 3.4vw, 44px) clamp(20px, 3vw, 40px);
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(var(--c-accent), 0.05);
+  overflow: hidden;
 }
-.rail::after {
+.steps::after {
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
-  background: linear-gradient(160deg, rgba(var(--c-accent), 0.09), transparent 42%);
+  background: linear-gradient(160deg, rgba(var(--c-accent), 0.08), transparent 40%);
 }
-.rail__head {
-  display: flex; align-items: center; justify-content: space-between; gap: 14px;
-  padding-bottom: 18px; margin-bottom: 6px;
-  border-bottom: 1px solid var(--line);
+.steps__track {
+  position: relative; z-index: 1;
+  list-style: none; margin: 0; padding: 0;
+  display: grid; grid-template-columns: repeat(5, 1fr);
+  gap: clamp(18px, 3vw, 34px);
 }
-.rail__title { font-family: var(--font-mono); font-size: 0.66rem; letter-spacing: 0.19em; text-transform: uppercase; color: var(--muted-2); }
-.rail__live { display: flex; align-items: center; gap: 7px; font-family: var(--font-mono); font-size: 0.64rem; color: var(--accent); letter-spacing: 0.1em; }
-.rail__dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 rgba(var(--c-accent), 0.6); animation: pulse 2.4s var(--ease-soft) infinite; }
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(var(--c-accent), 0.5); }
-  70% { box-shadow: 0 0 0 9px rgba(var(--c-accent), 0); }
-  100% { box-shadow: 0 0 0 0 rgba(var(--c-accent), 0); }
+.steps__track::before {
+  content: ""; position: absolute; left: 0; right: 0; top: 16px; height: 1px;
+  background: var(--line-2);
 }
-
-.rail__list { list-style: none; position: relative; padding-top: 14px; }
-.rail__list::before {
-  content: ""; position: absolute; left: 15px; top: 26px; bottom: 26px; width: 1px;
-  background: linear-gradient(180deg, transparent, var(--line-2) 12%, var(--line-2) 88%, transparent);
+.steps__track::after {
+  content: ""; position: absolute; left: 0; top: 16px; height: 2px;
+  width: var(--steps-fill, 0%);
+  background: linear-gradient(90deg, var(--accent-3), var(--accent-2));
+  box-shadow: 0 0 12px rgba(var(--c-accent), 0.5);
+  transition: width 1.6s var(--ease-out);
 }
-.rail__list::after {
-  content: ""; position: absolute; left: 15px; top: 26px; width: 1px;
-  height: var(--rail-fill, 0%);
-  background: linear-gradient(180deg, var(--accent-3), var(--accent-2));
-  box-shadow: 0 0 10px rgba(var(--c-accent), 0.55);
-  transition: height 1.8s var(--ease-out);
-}
-.rail__item {
-  position: relative;
-  display: grid; grid-template-columns: 32px 1fr; gap: 14px; align-items: start;
-  padding-block: 13px;
-  z-index: 1;
-}
-.rail__node {
-  width: 31px; height: 31px; border-radius: 50%;
+.steps__item { position: relative; z-index: 1; display: flex; flex-direction: column; }
+.steps__num {
+  width: 34px; height: 34px; border-radius: 50%;
   background: var(--s1); border: 1px solid var(--line-2);
   display: grid; place-items: center;
-  font-family: var(--font-mono); font-size: 0.63rem; color: var(--muted-2); font-weight: 500;
-  transition: background var(--t) var(--ease), color var(--t) var(--ease), border-color var(--t) var(--ease), transform var(--t) var(--ease);
-  transition-delay: var(--d, 0ms);
+  font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted-2); font-weight: 500;
+  margin-bottom: 16px;
+  transition: background var(--t) var(--ease), color var(--t) var(--ease), border-color var(--t) var(--ease), box-shadow var(--t) var(--ease), transform var(--t) var(--ease);
 }
-.rail__item.lit .rail__node {
+.steps__item:hover .steps__num {
   background: linear-gradient(140deg, var(--accent-3), var(--accent-2));
-  color: var(--ink); border-color: transparent; font-weight: 600;
+  color: var(--ink); border-color: transparent;
   transform: scale(1.06);
   box-shadow: 0 0 22px -4px rgba(var(--c-accent), 0.7);
 }
-.rail__label { font-size: 0.945rem; font-weight: 500; line-height: 1.35; margin-bottom: 2px; letter-spacing: -0.015em; }
-.rail__meta { font-size: 0.775rem; color: var(--muted-2); line-height: 1.45; }
-.rail__item.lit .rail__label { color: var(--text); }
-
-.rail__foot {
-  margin-top: 16px; padding-top: 18px; border-top: 1px solid var(--line);
+.steps__label { font-size: 1rem; font-weight: 500; line-height: 1.35; margin-bottom: 6px; letter-spacing: -0.015em; }
+.steps__meta { font-size: 0.82rem; color: var(--muted-2); line-height: 1.5; }
+.steps__foot {
+  position: relative; z-index: 1;
+  margin-top: clamp(22px, 3vw, 32px); padding-top: 18px; border-top: 1px solid var(--line);
   display: flex; align-items: center; gap: 11px;
   font-size: 0.79rem; color: var(--muted);
 }
-.rail__foot svg { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; }
-
+.steps__foot svg { width: 16px; height: 16px; color: var(--accent); flex-shrink: 0; }
 @media (max-width: 960px) {
-  .hero__grid { grid-template-columns: 1fr; gap: 44px; align-items: stretch; }
+  .steps__track { grid-template-columns: 1fr; gap: 26px; }
+  .steps__track::before, .steps__track::after { display: none; }
+  .hero__grid { max-width: none; }
   .hero { min-height: auto; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .steps__track::after { transition: none; }
+  .steps__num { transition: none; }
 }
 
 /* ============================================================

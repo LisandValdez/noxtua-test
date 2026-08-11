@@ -89,6 +89,14 @@ export const RAIL = {
   ],
 } as const;
 
+/** Header de la sección "Cómo trabajamos" (el riel que vivía en el hero). */
+export const RAIL_HEAD = {
+  eyebrow: "Proceso",
+  h2: "Cómo trabajamos.",
+  lead:
+    "Cinco pasos con fechas desde el primer día: analizamos, acordamos, construimos y optimizamos tu marca sin pasos ocultos.",
+} as const;
+
 /* ---------- Marquesina ---------- */
 export const MARQUEE_CLAIMS = [
   "Análisis inicial sin costo",

@@ -1,6 +1,7 @@
 import { Ambient } from "./components/Ambient";
 import { Nav } from "./components/Nav";
 import { Hero } from "./components/Hero";
+import { ComoTrabajamos } from "./components/ComoTrabajamos";
 import { Marquee } from "./components/Marquee";
 import { Diferencia } from "./components/Diferencia";
 import { Servicios } from "./components/Servicios";
@@ -55,6 +56,7 @@ export default function App() {
       <Nav />
       <main>
         <Hero />
+        <ComoTrabajamos />
         <Marquee />
         <Diferencia />
         <Servicios />
