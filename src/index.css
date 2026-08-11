@@ -800,6 +800,41 @@ h1, h2, h3, h4, h5 {
 }
 
 /* ============================================================
+   Carrusel de trabajos (marquee lento)
+   ============================================================ */
+.works-carousel__all {
+  display: inline-flex; align-items: center; gap: 8px;
+  margin-top: 20px;
+  font-weight: 500; color: var(--accent);
+  transition: color var(--t-fast) var(--ease), gap var(--t-fast) var(--ease);
+}
+.works-carousel__all:hover { color: var(--accent-3); gap: 11px; }
+.works-carousel__all svg { width: 16px; height: 16px; }
+
+.works-carousel {
+  overflow: hidden; padding-block: 6px;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+.works-carousel__track {
+  display: flex; width: max-content;
+  animation: works-slide 48s linear infinite;
+}
+.works-carousel:hover .works-carousel__track { animation-play-state: paused; }
+.works-carousel__group { display: flex; gap: clamp(16px, 2vw, 24px); }
+.works-carousel__cell { flex: 0 0 auto; width: min(420px, 78vw); }
+.works-carousel__cell .work { height: 100%; }
+
+@keyframes works-slide { to { transform: translateX(-50%); } }
+
+@media (prefers-reduced-motion: reduce) {
+  .works-carousel { overflow: visible; -webkit-mask-image: none; mask-image: none; }
+  .works-carousel__track { animation: none; flex-wrap: wrap; justify-content: center; }
+  .works-carousel__group { flex-wrap: wrap; justify-content: center; }
+  .works-carousel__group[aria-hidden="true"] { display: none; }
+}
+
+/* ============================================================
    Equipo
    ============================================================ */
 .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: clamp(14px, 1.8vw, 20px); }

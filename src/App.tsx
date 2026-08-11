@@ -15,8 +15,10 @@ import { Footer } from "./components/Footer";
 import { Fab } from "./components/Fab";
 import { BriefView } from "./components/brief/BriefView";
 import { PanelView } from "./components/panel/PanelView";
+import { TrabajosPage } from "./components/trabajos/TrabajosPage";
+import { WorkPage } from "./components/trabajos/WorkPage";
 import { savePartial, submitFinal } from "./components/brief/submit";
-import { useHashRoute } from "./router";
+import { getWorkSlug, useHashRoute } from "./router";
 import { KEYS, Store } from "./data/storage";
 import type { LeadRecord } from "./data/types";
 
@@ -36,6 +38,13 @@ export default function App() {
   if (route === "/brief") return <BriefView onSubmit={handleFinal} onPartial={handlePartial} />;
 
   if (route === "/panel") return <PanelView />;
+
+  if (route === "/trabajos") {
+    const slug = getWorkSlug();
+    /* key={slug} remonta WorkPage al pasar de un trabajo a otro (prev/next), así su
+       effect de scroll al tope se ejecuta aunque la ruta no cambie. */
+    return slug ? <WorkPage key={slug} slug={slug} /> : <TrabajosPage />;
+  }
 
   return (
     <>

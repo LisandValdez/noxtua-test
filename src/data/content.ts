@@ -20,6 +20,7 @@ export const NAV_LINKS = [
   { label: "Método", href: "#metodo" },
   { label: "Planes", href: "#planes" },
   { label: "Trabajo", href: "#trabajo" },
+  { label: "Trabajos", href: "#/trabajos" },
   { label: "Equipo", href: "#equipo" },
 ] as const;
 
@@ -28,8 +29,9 @@ export const NAV_LINKS_MOBILE = [
   { label: "Método", href: "#metodo", num: "02" },
   { label: "Planes", href: "#planes", num: "03" },
   { label: "Trabajo", href: "#trabajo", num: "04" },
-  { label: "Equipo", href: "#equipo", num: "05" },
-  { label: "Preguntas", href: "#faq", num: "06" },
+  { label: "Trabajos", href: "#/trabajos", num: "05" },
+  { label: "Equipo", href: "#equipo", num: "06" },
+  { label: "Preguntas", href: "#faq", num: "07" },
 ] as const;
 
 export const NAV_CTA = "Empezar el análisis";
@@ -306,16 +308,52 @@ export const TRABAJO_HEAD = {
     "Cada proyecto arranca por la estructura: qué dice la marca, cómo lo dice y en qué canal. Después viene lo visual.",
 } as const;
 
-export const TRABAJOS: ReadonlyArray<{
+/**
+ * TRABAJOS — cómo agregar un trabajo nuevo
+ * ------------------------------------------------------------------
+ * Copiá un bloque del array, completalo y la card del home (carrusel),
+ * la grilla de #/trabajos y la página de detalle lo toman solos
+ * (no hay que tocar componentes):
+ *
+ * {
+ *   slug: "mi-trabajo",              // URL: #/trabajos/mi-trabajo
+ *   cat: "Categoría · Subcategoría", // eyebrow de la card y del detalle
+ *   t: "Título del proyecto",        // título
+ *   d: "Descripción general (1-2 frases).",
+ *   cliente: "Nombre del cliente",   // editable
+ *   año: "2026",                     // año del proyecto
+ *   servicios: ["Identidad", "Web"], // chips del detalle
+ *   alcance: "Qué incluyó el proyecto.",
+ *   imgs: [                          // galería (la primera es la portada)
+ *     "/assets/<carpeta>/<pieza-1>.jpg",
+ *     "/assets/<carpeta>/<pieza-2>.jpg",
+ *   ],
+ * }
+ *
+ * Las carpetas de imágenes van en public/assets/ (path raíz /assets/...).
+ */
+export type Trabajo = {
+  slug: string;
   cat: string;
   t: string;
   d: string;
+  cliente: string;
+  año: string;
+  servicios: string[];
+  alcance: string;
   imgs: string[];
-}> = [
+};
+
+export const TRABAJOS: ReadonlyArray<Trabajo> = [
   {
+    slug: "sistema-de-marca",
     cat: "Branding · Sistema de marca",
     t: "Un sistema que sostiene la marca en todos lados",
     d: "Construcción de identidad completa: del logotipo a las reglas de aplicación, para que la marca se vea igual de sólida en un cartel, en Instagram y en una factura.",
+    cliente: "Marca de servicios profesionales",
+    año: "2025",
+    servicios: ["Identidad visual", "Sistema de aplicación", "Guía de uso"],
+    alcance: "Del logotipo a las reglas de aplicación: cartel, Instagram y facturación.",
     imgs: [
       "/assets/Sistema de marca/Sist. de Marca s1.jpg",
       "/assets/Sistema de marca/Sist. de Marca s2.jpg",
@@ -323,9 +361,14 @@ export const TRABAJOS: ReadonlyArray<{
     ],
   },
   {
+    slug: "comunicacion-multicanal",
     cat: "Comunicación · Multicanal",
     t: "Una sola idea, adaptada a cada canal",
     d: "Bajada de un mismo concepto a formatos de feed, historias, vía pública y piezas impresas, cuidando que el mensaje no se diluya al cambiar de soporte.",
+    cliente: "Marca en crecimiento",
+    año: "2025",
+    servicios: ["Estrategia de contenido", "Feed y stories", "Vía pública", "Piezas impresas"],
+    alcance: "Bajada de un mismo concepto a formatos de feed, historias, vía pública e impresos.",
     imgs: [
       "/assets/Comunicación Multicanal/Com. Multicanal S1.jpg",
       "/assets/Comunicación Multicanal/Com. Multicanal S2.jpg",
@@ -476,6 +519,7 @@ export const FOOTER = {
     { label: "Método", href: "#metodo" },
     { label: "Planes", href: "#planes" },
     { label: "Trabajo", href: "#trabajo" },
+    { label: "Trabajos", href: "#/trabajos" },
     { label: "Equipo", href: "#equipo" },
   ],
   contactTitle: "Contacto",
