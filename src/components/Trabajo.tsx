@@ -71,7 +71,7 @@ export function Trabajo() {
           ))}
 
           <Reveal direction="scale" delay={TRABAJOS.length * 0.11}>
-            <a className="work" href="#contacto" style={{ display: "block" }}>
+            <a className="work" href="#/brief" style={{ display: "block" }}>
               <div className="work__media">
                 <div className="work__ph" style={{ flexDirection: "column" }}>
                   <span style={{ fontSize: "2.4rem", color: "var(--accent)", opacity: 0.5, letterSpacing: 0 }}>

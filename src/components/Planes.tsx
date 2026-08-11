@@ -48,7 +48,7 @@ export function Planes() {
                   </li>
                 ))}
               </ul>
-              <a className={`btn ${p.destacado ? "btn--primary" : "btn--ghost"} btn--block`} href="#contacto">
+              <a className={`btn ${p.destacado ? "btn--primary" : "btn--ghost"} btn--block`} href="#/brief">
                 {p.cta}
               </a>
             </Reveal>
@@ -60,7 +60,7 @@ export function Planes() {
             <strong style={{ color: "var(--text)" }}>{PLANS_FOOT.strong}</strong>
             {PLANS_FOOT.rest}
           </p>
-          <a className="btn btn--ghost btn--sm" href="#contacto">
+          <a className="btn btn--ghost btn--sm" href="#/brief">
             {PLANS_FOOT.cta}
           </a>
         </Reveal>
