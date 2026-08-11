@@ -613,7 +613,6 @@ input[type="range"]::-moz-range-thumb {
   box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.9);
   backdrop-filter: blur(14px);
   display: flex; align-items: center; gap: 10px;
-  transition: transform 0.5s var(--ease), opacity 0.5s var(--ease);
   pointer-events: none; max-width: calc(100vw - 32px);
 }
 .toast.show { transform: translate(-50%, 0); opacity: 1; }
