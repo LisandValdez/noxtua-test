@@ -13,8 +13,8 @@
   --text: #e9f0f8;    --muted: #9aa7b6;     --muted-2: #66748a;  --placeholder: #5a6880;
   --ink: #03081a;     --bg: #071126;        --s1: #0f1724;       --s2: #101c31;  --s3: #16243c;
   --on-accent: #08111f; --scroll: #1c2942;  --scroll-hover: #2a3c5c;
-  --font-display: "Bricolage Grotesque", "Inter Tight", system-ui, sans-serif;
-  --display-w: 600; --display-w-mid: 600; --display-ls: -0.035em;
+  --font-display: "Source Sans 3", system-ui, sans-serif;
+  --display-w: 600; --display-w-mid: 600; --display-ls: -0.02em;
 
   /* Derivados */
   --accent-soft: rgba(var(--c-accent), 0.12);
@@ -22,9 +22,9 @@
   --line: rgba(var(--c-text), 0.09);
   --line-2: rgba(var(--c-text), 0.16);
 
-  /* Tipografía de cuerpo y utilitaria */
-  --font-body: "Inter Tight", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
+  /* Tipografía de cuerpo y utilitaria - solo Source Sans 3 */
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+  --font-mono: "Source Sans 3", system-ui, sans-serif;
 
   /* Ritmo */
   --container: 1240px;
@@ -419,14 +419,14 @@ h1, h2, h3, h4, h5 {
 .hero__media { position: absolute; inset: 0; z-index: 0; }
 .hero__media-bg {
   position: absolute; inset: 0;
-  background-image: url("/assets/hero-loop-poster.png");
+  background-image: url("/assets/hero-loop-buho.png");
   background-size: cover;
   background-position: center;
 }
 .hero__video { width: 100%; height: 100%; object-fit: cover; }
 .hero__overlay {
   position: absolute; inset: 0; z-index: 10;
-  background: linear-gradient(180deg, rgba(3, 8, 26, 0.55) 0%, rgba(3, 8, 26, 0.78) 46%, rgba(3, 8, 26, 0.85) 100%);
+  background: linear-gradient(180deg, rgba(3, 8, 26, 0.35) 0%, rgba(3, 8, 26, 0.55) 46%, rgba(3, 8, 26, 0.65) 100%);
 }
 
 .hero__grid {

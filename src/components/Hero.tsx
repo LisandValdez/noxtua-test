@@ -30,8 +30,8 @@ export function Hero() {
         >
           <video
             className="hero__video"
-            src="/assets/hero-loop-poster.mp4"
-            poster="/assets/hero-loop-poster.png"
+            src="/assets/hero-loop-buho.mp4"
+            poster="/assets/hero-loop-buho.png"
             autoPlay
             loop
             muted
