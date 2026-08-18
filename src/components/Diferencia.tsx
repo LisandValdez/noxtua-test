@@ -7,7 +7,6 @@ export function Diferencia() {
     <section className="section" id="diferencia">
       <div className="container">
         <Reveal className="section-head">
-          <span className="eyebrow">{DIFERENCIA.eyebrow}</span>
           <h2 className="h-xl">{DIFERENCIA.h2}</h2>
           <p className="lead">{DIFERENCIA.lead}</p>
         </Reveal>

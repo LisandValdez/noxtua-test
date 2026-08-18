@@ -16,7 +16,6 @@ export function Servicios() {
     <section className="section" id="servicios">
       <div className="container">
         <Reveal className="section-head">
-          <span className="eyebrow">{SERVICIOS_HEAD.eyebrow}</span>
           <h2 className="h-xl">{SERVICIOS_HEAD.h2}</h2>
           <p className="lead">{SERVICIOS_HEAD.lead}</p>
         </Reveal>

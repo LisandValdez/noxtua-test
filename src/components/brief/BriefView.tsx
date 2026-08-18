@@ -336,7 +336,11 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
             Volver al sitio
           </a>
           <a className="brand" href="#/" aria-label="NOXTUA, ir al inicio">
-            <span className="brand__name">NOXTUA</span>
+            <img
+              src="/assets/NOXTUA Logotipo horizontal negativo.png"
+              alt="NOXTUA"
+              className="brand__logo"
+            />
           </a>
           <span className={`app__save${saved ? " show" : ""}`}>
             <b />

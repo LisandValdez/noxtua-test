@@ -23,7 +23,6 @@ export function Equipo() {
     <section className="section" id="equipo">
       <div className="container">
         <Reveal className="section-head">
-          <span className="eyebrow">{EQUIPO_HEAD.eyebrow}</span>
           <h2 className="h-xl">{EQUIPO_HEAD.h2}</h2>
           <p className="lead">{EQUIPO_HEAD.lead}</p>
         </Reveal>

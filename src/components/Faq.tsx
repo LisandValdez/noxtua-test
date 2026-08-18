@@ -9,7 +9,6 @@ export function Faq() {
     <section className="section" id="faq">
       <div className="container">
         <Reveal className="section-head center">
-          <span className="eyebrow no-rule">{FAQ_HEAD.eyebrow}</span>
           <h2 className="h-xl">{FAQ_HEAD.h2}</h2>
         </Reveal>
 

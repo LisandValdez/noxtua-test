@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { TRABAJOS } from "../../data/content";
+import { ArrowLeft, ArrowRight, Mail } from "lucide-react";
+import { TRABAJOS, CONTACTO } from "../../data/content";
 import { Nav } from "../Nav";
 import { Footer } from "../Footer";
 import { Fab } from "../Fab";
@@ -22,13 +22,11 @@ function NotFound() {
         <section className="section trabajos-hero">
           <div className="container">
             <motion.div initial={{ opacity: 0, y: 26 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, ease: EASE }}>
-              <span className="eyebrow">Trabajo</span>
               <h1 className="h-xxl">Ese proyecto no existe</h1>
               <p className="lead">Puede que haya cambiado de nombre o que la dirección esté incompleta.</p>
               <div className="trabajos-hero__actions">
                 <a className="btn btn--primary btn--lg" href="#/trabajos">
                   Ver todos los trabajos
-                  <ArrowRight aria-hidden="true" />
                 </a>
                 <a className="btn btn--ghost btn--lg" href="#/">
                   Volver al inicio
@@ -75,7 +73,6 @@ export function WorkPage({ slug }: { slug: string }) {
                 <ArrowLeft aria-hidden="true" />
                 Todos los trabajos
               </a>
-              <span className="eyebrow">{w.cat}</span>
               <h1 className="h-xxl">{w.t}</h1>
               <p className="lead">{w.d}</p>
             </motion.div>
@@ -133,9 +130,8 @@ export function WorkPage({ slug }: { slug: string }) {
                 <span className="work-nav__meta">Anterior</span>
                 <span className="work-nav__title">{prev.t}</span>
               </a>
-              <a className="btn btn--primary btn--lg" href="#/brief">
-                Empezar el tuyo
-                <ArrowRight aria-hidden="true" />
+              <a className="btn btn--primary btn--lg" href="https://mail.google.com/mail/?view=cm&fs=1&to=noxtuacreative@gmail.com" target="_blank" rel="noopener noreferrer">
+                <Mail aria-hidden="true" /> Escribirnos
               </a>
               <a className="work-nav__item work-nav__item--next" href={`#/trabajos/${next.slug}`}>
                 <span className="work-nav__meta">Siguiente</span>

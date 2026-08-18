@@ -89,7 +89,6 @@ export const RAIL = {
 
 /** Header de la sección "Cómo trabajamos" (el riel que vivía en el hero). */
 export const RAIL_HEAD = {
-  eyebrow: "Proceso",
   h2: "Cómo trabajamos.",
   lead:
     "Cinco pasos con fechas desde el primer día: analizamos, acordamos, construimos y optimizamos tu marca sin pasos ocultos.",
@@ -109,7 +108,6 @@ export const MARQUEE_CLAIMS = [
 
 /* ---------- Diferencia ---------- */
 export const DIFERENCIA = {
-  eyebrow: "Por qué Noxtua",
   h2: "Contratar marketing no debería sentirse como una apuesta.",
   lead:
     "La mayoría de las marcas termina con un diseñador, alguien que hace la web y una tercera persona que gestiona la pauta, cada uno trabajando por su cuenta y con criterios distintos.",
@@ -132,7 +130,6 @@ export const DIFERENCIA = {
 
 /* ---------- Servicios ---------- */
 export const SERVICIOS_HEAD = {
-  eyebrow: "Servicios",
   h2: "Todo lo que tu marca necesita para vender online.",
   lead:
     "Podés tomar una pieza suelta o el sistema completo. Lo que no hacemos es venderte algo que tu negocio todavía no necesita.",
@@ -186,7 +183,6 @@ export const SERVICIOS: ReadonlyArray<{
 
 /* ---------- Planes ---------- */
 export const PLANES_HEAD = {
-  eyebrow: "Planes",
   h2: "Precios claros desde la primera conversación.",
   lead:
     "Honorarios de agencia. La inversión en plataformas (pauta) va aparte y siempre la controlás vos desde tu propia cuenta.",
@@ -267,7 +263,6 @@ export const PLANS_FOOT = {
 
 /* ---------- Trabajo (portafolio) ---------- */
 export const TRABAJO_HEAD = {
-  eyebrow: "Trabajo",
   h2: "Sistemas de marca que funcionan en todos lados.",
   lead:
     "Cada proyecto arranca por la estructura: qué dice la marca, cómo lo dice y en qué canal. Después viene lo visual.",
@@ -354,7 +349,6 @@ export const WORK_INVITE = {
 
 /* ---------- Equipo ---------- */
 export const EQUIPO_HEAD = {
-  eyebrow: "Equipo",
   h2: "Un equipo de cuatro personas que trabaja de cerca con cada marca.",
   lead:
     "Quien diseña tu identidad, quien construye tu sitio y quien maneja tu pauta se sientan en la misma mesa y hablan con vos directamente.",
@@ -399,7 +393,6 @@ export const EQUIPO: ReadonlyArray<{
 
 /* ---------- FAQ ---------- */
 export const FAQ_HEAD = {
-  eyebrow: "Preguntas",
   h2: "Lo que todos nos preguntan antes de empezar.",
 } as const;
 
@@ -440,7 +433,6 @@ export const FAQ: ReadonlyArray<{ q: string; a: string }> = [
 
 /* ---------- CTA final ---------- */
 export const CTA = {
-  eyebrow: "Próximo paso",
   h2: "Contanos en qué momento está tu marca y te devolvemos un plan concreto.",
   lead:
     "El formulario lleva ocho minutos, termina con la llamada agendada y llegamos a esa reunión con tu caso ya leído.",
@@ -456,8 +448,8 @@ export const CONTACTO_CARDS = [
     span: "Correo",
     strong: CONTACTO.email,
     em: "Respondemos en 24 h hábiles",
-    href: `mailto:${CONTACTO.email}`,
-    external: false,
+    href: `https://mail.google.com/mail/?view=cm&fs=1&to=${CONTACTO.email}`,
+    external: true,
   },
   {
     span: "Canal directo",
@@ -489,7 +481,7 @@ export const FOOTER = {
   contactTitle: "Contacto",
   contact: [
     { label: "Análisis sin costo", href: "#/brief" },
-    { label: "Escribirnos", href: `mailto:${CONTACTO.email}` },
+    { label: "Escribirnos", href: `https://mail.google.com/mail/?view=cm&fs=1&to=${CONTACTO.email}` },
     { label: "WhatsApp", href: `https://wa.me/${CONTACTO.whatsapp}?text=${encodeURIComponent(WA_DEFAULT_MSG)}` },
     { label: "Acceso equipo", href: "#/panel" },
   ],

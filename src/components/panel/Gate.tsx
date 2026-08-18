@@ -42,7 +42,6 @@ export function Gate({ onUnlock }: { onUnlock: () => void }) {
         }
         transition={reduce ? undefined : err ? { duration: 0.4, ease: "easeOut" } : { duration: 0.45, ease: EASE }}
       >
-        <span className="eyebrow no-rule">Acceso restringido</span>
         <h2>Panel de NOXTUA</h2>
         <p className="body-muted">Ingresá la clave del equipo para ver los diagnósticos.</p>
         <div className={`field${err ? " err" : ""}`}>

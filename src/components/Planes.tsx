@@ -7,7 +7,6 @@ export function Planes() {
     <section className="section" id="planes">
       <div className="container">
         <Reveal className="section-head center">
-          <span className="eyebrow no-rule">{PLANES_HEAD.eyebrow}</span>
           <h2 className="h-xl">{PLANES_HEAD.h2}</h2>
           <p className="lead" style={{ marginInline: "auto" }}>{PLANES_HEAD.lead}</p>
         </Reveal>

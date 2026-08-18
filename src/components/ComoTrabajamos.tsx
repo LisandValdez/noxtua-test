@@ -32,7 +32,6 @@ export function ComoTrabajamos() {
     <section className="section" id="comotrabajamos">
       <div className="container">
         <Reveal className="section-head">
-          <span className="eyebrow">{RAIL_HEAD.eyebrow}</span>
           <h2 className="h-xl">{RAIL_HEAD.h2}</h2>
           <p className="lead">{RAIL_HEAD.lead}</p>
         </Reveal>

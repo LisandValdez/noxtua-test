@@ -1,28 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowRight } from "lucide-react";
-import { NAV_LINKS, NAV_LINKS_MOBILE, NAV_CTA } from "../data/content";
-
-/** Marca con marca de agua de respaldo si el isotipo no carga. */
-function Brand({ sub = true }: { sub?: boolean }) {
-  const [failed, setFailed] = useState(false);
-  return (
-    <a className="brand" href="#main" aria-label="NOXTUA, ir al inicio">
-      <span className="brand__mark">
-        {failed ? "N" : (
-          <img
-            src="/assets/NOXTUA isotipo JPG-100.jpg"
-            alt=""
-            onError={() => setFailed(true)}
-          />
-        )}
-      </span>
-      <span>
-        <span className="brand__name">NOXTUA</span>
-        {sub && <span className="brand__sub">Marca, web y pauta</span>}
-      </span>
-    </a>
-  );
-}
+import { NAV_LINKS, NAV_LINKS_MOBILE } from "../data/content";
 
 export function Nav() {
   const [scrolled, setScrolled] = useState(false);
@@ -65,7 +42,13 @@ export function Nav() {
       <div className="progress" ref={progressRef} aria-hidden="true" />
       <header className={`nav${scrolled ? " scrolled" : ""}`}>
         <div className="nav__inner">
-          <Brand />
+          <a className="brand" href="#main" aria-label="NOXTUA, ir al inicio">
+            <img
+              src="/assets/NOXTUA Logotipo horizontal negativo.png"
+              alt="NOXTUA"
+              className="brand__logo"
+            />
+          </a>
 
           {/* Píldora central */}
           <nav className="nav__pill" aria-label="Principal">
@@ -80,9 +63,8 @@ export function Nav() {
             ))}
           </nav>
 
-          <a className="btn btn--primary btn--sm nav__cta" href="#/brief">
-            {NAV_CTA}
-            <ArrowRight aria-hidden="true" />
+          <a className="btn btn--primary btn--sm nav__cta" href="#cta">
+            Contactanos
           </a>
 
           <button
@@ -106,9 +88,8 @@ export function Nav() {
             <i>{l.num}</i>
           </a>
         ))}
-        <a className="btn btn--primary btn--lg" href="#/brief" onClick={() => setOpen(false)}>
-          {NAV_CTA}
-          <ArrowRight aria-hidden="true" />
+        <a className="btn btn--primary btn--lg" href="#cta" onClick={() => setOpen(false)}>
+          Contactanos
         </a>
       </div>
     </>

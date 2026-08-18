@@ -9,19 +9,12 @@ export function Footer() {
         <div className="footer__grid">
           <div className="footer__brand">
             <a className="brand" href="#main" aria-label="NOXTUA, ir al inicio">
-              <span className="brand__mark">
-                {failed ? "N" : (
-                  <img
-                    src="/assets/NOXTUA isotipo JPG-100.jpg"
-                    alt=""
-                    onError={() => setFailed(true)}
-                  />
-                )}
-              </span>
-              <span>
-                <span className="brand__name">NOXTUA</span>
-              </span>
-            </a>
+            <img
+              src="/assets/NOXTUA Logotipo horizontal negativo.png"
+              alt="NOXTUA"
+              className="brand__logo"
+            />
+          </a>
             <p>{FOOTER.brand}</p>
           </div>
           <div>

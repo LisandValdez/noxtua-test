@@ -1,17 +1,25 @@
-import { ArrowRight } from "lucide-react";
+import { useRef } from "react";
+import { ArrowLeft, ArrowRight } from "lucide-react";
 import { TRABAJO_HEAD, TRABAJOS } from "../data/content";
 import { Reveal } from "./Reveal";
-import { WorkCard, WorkInviteCard } from "./trabajos/WorkCard";
+import { WorkCard } from "./trabajos/WorkCard";
 
-/** Carrusel marquee lento de trabajos. El track duplica su contenido en dos
- *  mitades idénticas para un loop sin salto; la segunda copia es decorativa
- *  (aria-hidden y no enfocable). Con reduced-motion el track vuelve a grilla. */
+/** Carrusel de trabajos con botones de desplazamiento lateral. */
 export function Trabajo() {
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  const scrollBy = (dir: 1 | -1) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const cell = track.querySelector<HTMLElement>(".works-carousel__cell");
+    const step = (cell?.offsetWidth ?? 420) + 56;
+    track.scrollBy({ left: dir * step, behavior: "smooth" });
+  };
+
   return (
     <section className="section" id="trabajo">
       <div className="container">
         <Reveal className="section-head">
-          <span className="eyebrow">{TRABAJO_HEAD.eyebrow}</span>
           <h2 className="h-xl">{TRABAJO_HEAD.h2}</h2>
           <p className="lead">{TRABAJO_HEAD.lead}</p>
           <a className="works-carousel__all" href="#/trabajos">
@@ -22,20 +30,33 @@ export function Trabajo() {
       </div>
 
       <div className="works-carousel">
-        <div className="works-carousel__track">
-          {[0, 1].map((copy) => (
-            <div className="works-carousel__group" key={copy} aria-hidden={copy === 1 || undefined}>
-              {TRABAJOS.map((w) => (
-                <div className="works-carousel__cell" key={w.slug}>
-                  <WorkCard trabajo={w} focusable={copy === 0} />
-                </div>
-              ))}
-              <div className="works-carousel__cell">
-                <WorkInviteCard focusable={copy === 0} />
+        <button
+          className="works-carousel__btn works-carousel__btn--prev"
+          type="button"
+          aria-label="Desplazar carrusel a la izquierda"
+          onClick={() => scrollBy(-1)}
+        >
+          <ArrowLeft aria-hidden="true" />
+        </button>
+
+        <div className="works-carousel__viewport">
+          <div className="works-carousel__track" ref={trackRef}>
+            {TRABAJOS.map((w) => (
+              <div className="works-carousel__cell" key={w.slug}>
+                <WorkCard trabajo={w} focusable />
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
+
+        <button
+          className="works-carousel__btn works-carousel__btn--next"
+          type="button"
+          aria-label="Desplazar carrusel a la derecha"
+          onClick={() => scrollBy(1)}
+        >
+          <ArrowRight aria-hidden="true" />
+        </button>
       </div>
     </section>
   );

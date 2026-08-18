@@ -24,7 +24,6 @@ export function TrabajosPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: EASE }}
             >
-              <span className="eyebrow">{TRABAJO_HEAD.eyebrow}</span>
               <h1 className="h-xxl">Todos los proyectos</h1>
               <p className="lead">{TRABAJO_HEAD.lead}</p>
             </motion.div>
