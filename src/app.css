@@ -41,7 +41,7 @@
 }
 .app__save.show { opacity: 1; }
 .app__save b { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); }
-.brand__logo { height: 40px; width: auto; }
+.brand__logo { height: 55px; width: auto; }
 .brand:hover .brand__logo { opacity: 0.85; transition: opacity var(--t-fast) var(--ease); }
 
 .app__progress { height: 2px; background: rgba(var(--c-text), 0.07); position: relative; overflow: hidden; }

@@ -281,7 +281,7 @@ h1, h2, h3, h4, h5 {
   position: relative;
 }
 .brand { display: flex; align-items: center; flex-shrink: 0; }
-.brand__logo { height: 40px; width: auto; }
+.brand__logo { height: 55px; width: auto; }
 .brand:hover .brand__logo { opacity: 0.85; transition: opacity var(--t-fast) var(--ease); }
 
 /* Píldora central de navegación (nuevo layout del nav) */
