@@ -13,7 +13,7 @@
   --text: #e9f0f8;    --muted: #9aa7b6;     --muted-2: #66748a;  --placeholder: #5a6880;
   --ink: #03081a;     --bg: #071126;        --s1: #0f1724;       --s2: #101c31;  --s3: #16243c;
   --on-accent: #08111f; --scroll: #1c2942;  --scroll-hover: #2a3c5c;
-  --font-display: "Source Sans 3", system-ui, sans-serif;
+  --font-display: "Baloo 2", system-ui, sans-serif;
   --display-w: 600; --display-w-mid: 600; --display-ls: -0.02em;
 
   /* Derivados */
@@ -23,8 +23,8 @@
   --line-2: rgba(var(--c-text), 0.16);
 
   /* Tipografía de cuerpo y utilitaria - solo Source Sans 3 */
-  --font-body: "Source Sans 3", system-ui, sans-serif;
-  --font-mono: "Source Sans 3", system-ui, sans-serif;
+  --font-body: "Baloo 2", system-ui, sans-serif;
+  --font-mono: "Baloo 2", system-ui, sans-serif;
 
   /* Ritmo */
   --container: 1240px;
@@ -127,7 +127,6 @@ h1, h2, h3, h4, h5 {
 .eyebrow.no-rule::before { display: none; }
 
 .accent { color: var(--accent); }
-.serif-em { font-style: italic; font-weight: 500; color: var(--accent-3); }
 
 /* Texto con gradiente de marca */
 .grad-text {
