@@ -94,16 +94,28 @@ export const RAIL_HEAD = {
     "Cinco pasos con fechas desde el primer día: analizamos, acordamos, construimos y optimizamos tu marca sin pasos ocultos.",
 } as const;
 
-/* ---------- Marquesina ---------- */
-export const MARQUEE_CLAIMS = [
-  "Análisis inicial sin costo",
-  "Marca, web y pauta en un mismo equipo",
-  "Cronograma con fechas desde el primer día",
-  "Reportes que se entienden",
-  "Tus cuentas siempre son tuyas",
-  "Un canal directo con el equipo",
-  "Sin permanencia después del tercer mes",
-  "Autorización de rubros regulados incluida",
+/* ---------- Marquesina de logos de clientes ---------- */
+export const MARQUEE_LOGOS = [
+  "Biatech logo.png",
+  "Casa Malbec Logo 1.png",
+  "consin.png",
+  "EXTRABRUT_LOGOS DIGITAL_RGB_NEGRO_BLANCO_BLANCO.png",
+  "HSA B 1.png",
+  "iamgo_blanco@300x.png",
+  "inta-argentina.png",
+  "logo mat.png",
+  "logo ultratienda.png",
+  "logo-blanco-1-300x139.png",
+  "logo-horizontal-blanco.png",
+  "Logo-LTN-Blanco.png",
+  "Logo-Redes-Compress-BLANCO.png",
+  "Logotipo con bajada Essentia (4).png",
+  "logo-uaysen_patagonia_negro_horizontal.jpg",
+  "marcablanco.png",
+  "Pablo Edelstein - 6.png",
+  "PNG-BLANCO_Mesa de trabajo 1.png",
+  "Recurso 12.png",
+  "Recurso 5.png",
 ] as const;
 
 /* ---------- Diferencia ---------- */

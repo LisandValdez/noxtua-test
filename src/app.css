@@ -89,7 +89,7 @@
   display: flex; align-items: center; gap: 9px;
   padding: 8px 14px; border-radius: 100px;
   border: 1px solid var(--line);
-  font-size: 0.79rem; color: var(--muted-2); white-space: nowrap;
+  color: var(--muted-2); white-space: nowrap;
   transition: all var(--t) var(--ease);
   flex-shrink: 0;
   min-width: 110px; /* Evita que los botones se deformen al cambiar contenido */
@@ -137,6 +137,7 @@
 }
 .step__head h2 { font-size: clamp(1.75rem, 4vw, 2.7rem); margin-bottom: 16px; }
 .step__head p { color: var(--muted); font-size: 1rem; line-height: 1.65; font-weight: 350; }
+.step__sub { font-size: 1.5rem; font-weight: 700; color: var(--accent); margin: 0 0 12px; }
 
 /* ============================================================
    Fieldsets y campos
@@ -146,6 +147,7 @@
   font-size: 1.02rem; font-weight: 550; margin-bottom: 7px; display: block; letter-spacing: -0.015em;
   font-family: var(--font-display);
 }
+.fieldset__legend--accent { color: var(--accent); font-weight: 700; font-size: 1.15rem; }
 .fieldset__hint { font-size: 0.845rem; color: var(--muted-2); margin-bottom: 18px; line-height: 1.55; }
 
 .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
@@ -345,7 +347,7 @@ input[type="range"]::-moz-range-thumb {
 /* ============================================================
    Pantalla final + Resumen + Agenda
    ============================================================ */
-.done { max-width: 760px; margin-inline: auto; text-align: center; padding-top: clamp(20px, 4vw, 40px); }
+.done { max-width: 760px; text-align: center; }
 .done__icon, .done__mark {
   width: 74px; height: 74px; border-radius: 50%; margin: 0 auto 30px;
   background: linear-gradient(140deg, var(--accent-3), var(--accent-2));

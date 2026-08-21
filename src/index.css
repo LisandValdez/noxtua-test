@@ -580,12 +580,18 @@ h1, h2, h3, h4, h5 {
 .marquee:hover .marquee__track { animation-play-state: paused; }
 @keyframes slide { to { transform: translateX(-50%); } }
 .marquee__item {
-  display: flex; align-items: center; gap: 11px;
+  display: flex; align-items: center;
   padding-inline: clamp(20px, 3vw, 38px);
-  font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.11em;
-  text-transform: uppercase; color: var(--muted-2); white-space: nowrap;
+  white-space: nowrap;
 }
-.marquee__item svg { width: 14px; height: 14px; color: var(--accent); opacity: 0.85; }
+.marquee__item img {
+  max-height: 28px;
+  width: auto;
+  object-fit: contain;
+  opacity: 0.7;
+  transition: opacity var(--t) var(--ease);
+}
+.marquee__item img:hover { opacity: 1; }
 
 /* ============================================================
    Problema / Diferencial
@@ -805,7 +811,7 @@ h1, h2, h3, h4, h5 {
 }
 
 /* ============================================================
-   Carrusel de trabajos (scroll manual)
+   Carrusel de trabajos (loop continuo)
    ============================================================ */
 .works-carousel__all {
   display: inline-flex; align-items: center; gap: 8px;
@@ -817,65 +823,48 @@ h1, h2, h3, h4, h5 {
 .works-carousel__all svg { width: 16px; height: 16px; }
 
 .works-carousel {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 16px;
+  overflow: hidden;
+  position: relative;
 }
+.works-carousel::before,
+.works-carousel::after {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  width: clamp(48px, 10%, 120px);
+  z-index: 2;
+  pointer-events: none;
+}
+.works-carousel::before { left: 0; background: linear-gradient(90deg, var(--bg), transparent); }
+.works-carousel::after { right: 0; background: linear-gradient(270deg, var(--bg), transparent); }
 
 .works-carousel__viewport {
-  overflow-x: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  overflow: hidden;
   padding-block: 6px;
 }
-.works-carousel__viewport::-webkit-scrollbar { display: none; }
 
 .works-carousel__track {
   --ws-gap: clamp(32px, 4vw, 56px);
-  display: flex; gap: var(--ws-gap);
-  padding-right: var(--ws-gap);
+  display: flex;
+  width: max-content;
+  animation: works-slide 48s linear infinite;
 }
+.works-carousel:hover .works-carousel__track { animation-play-state: paused; }
+
+@keyframes works-slide { to { transform: translateX(-50%); } }
 
 .works-carousel__group {
-  display: flex; gap: var(--ws-gap);
+  display: flex;
+  gap: var(--ws-gap);
+  padding-right: var(--ws-gap);
 }
 
 .works-carousel__cell { flex: 0 0 auto; width: min(420px, 78vw); }
 .works-carousel__cell .work { height: 100%; }
 
-/* Botones de scroll */
-.works-carousel__btn {
-  display: grid; place-items: center;
-  width: 48px; height: 48px;
-  border-radius: 50%;
-  background: rgba(var(--c-s1), 0.9);
-  border: 1px solid var(--line);
-  color: var(--muted);
-  backdrop-filter: blur(8px);
-  transition: all var(--t-fast) var(--ease);
-  flex-shrink: 0;
-  z-index: 1;
-}
-.works-carousel__btn svg { width: 20px; height: 20px; }
-.works-carousel__btn:hover {
-  background: var(--accent);
-  border-color: var(--accent-line);
-  color: var(--ink);
-  transform: scale(1.05);
-}
-.works-carousel__btn:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-@media (max-width: 760px) {
-  .works-carousel { grid-template-columns: 1fr; }
-  .works-carousel__btn { display: none; }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .works-carousel__viewport { scroll-behavior: auto; }
+  .works-carousel__track { animation: none; }
+  .works-carousel__viewport { overflow-x: auto; }
 }
 
 /* ============================================================
