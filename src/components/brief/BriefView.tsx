@@ -203,6 +203,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
       case "opt-radio":
         return (
           <motion.div className="fieldset" key={i} {...wrap}>
+            {c.subtitulo && <span className="fieldset__legend fieldset__legend--accent">{c.subtitulo}</span>}
             <div className="opts opts--3">
               {c.options.map((o) => (
                 <OptionCard
@@ -315,6 +316,7 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
   const stepContent = (
     <>
       <StepHeader step={state.step} title={STEP_HEADS[state.step - 1].title} subtitle={STEP_HEADS[state.step - 1].subtitle} />
+      {state.step === 5 && <p className="step__sub">¿Cuánto querés invertir?</p>}
       <motion.div
         variants={staggerContainer}
         initial={reduce ? false : "hidden"}
@@ -399,12 +401,6 @@ export function BriefView({ onSubmit, onPartial }: { onSubmit: (rec: LeadRecord)
                         )}
                       </b>
                       {name}
-                      {isCurrent &&
-                        (reduce ? (
-                          <span className="steps-rail__pill" aria-hidden="true" />
-                        ) : (
-                          <motion.span layoutId="step-pill" className="steps-rail__pill" aria-hidden="true" />
-                        ))}
                     </button>
                   );
                 })}
