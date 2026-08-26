@@ -1,0 +1,189 @@
+/* ============================================================
+   PRELOADER
+   Pantalla de carga completa con logo animado, anillo de progreso
+   y texto "Cargando..." con puntos suspensivos animados.
+   ============================================================ */
+
+.preloader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  opacity: 1;
+  transition: opacity 700ms var(--ease), transform 700ms var(--ease);
+  pointer-events: none;
+}
+
+/* Estado oculto: fade-out + scale-up sutil */
+.preloader--hidden {
+  opacity: 0;
+  transform: scale(1.02);
+  pointer-events: none;
+}
+
+/* Resplandor ambiental detrás del logo (simula ojos brillando) */
+.preloader__glow {
+  position: absolute;
+  width: clamp(200px, 35vw, 320px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(var(--c-accent), 0.18) 0%,
+    rgba(var(--c-accent), 0.06) 40%,
+    transparent 70%
+  );
+  filter: blur(40px);
+  pointer-events: none;
+  animation: pulse-glow 4s var(--ease) infinite;
+}
+
+/* Contenedor del anillo de progreso (centra el logo dentro) */
+.preloader__ring-wrapper {
+  position: relative;
+  width: clamp(160px, 28vw, 260px);
+  height: clamp(160px, 28vw, 260px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1; /* encima del glow */
+}
+
+/* Anillo principal: borde con gradiente que rota */
+.preloader__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  border-top-color: var(--accent);    /* #fdbd0e - inicio del trazo */
+  border-right-color: var(--accent-3); /* #ffd764 - highlight */
+  animation: spin 1.6s linear infinite;
+  filter: drop-shadow(0 0 12px rgba(var(--c-accent), 0.5));
+}
+
+/* Anillo secundario: gradiente cónico con máscara para efecto "llenado" */
+.preloader__ring::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0%,
+    var(--accent) 25%,
+    var(--accent-3) 50%,
+    var(--accent) 75%,
+    transparent 100%
+  );
+  /* Máscara para dejar solo el borde (stroke) */
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff calc(100% - 3px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #fff calc(100% - 3px));
+  animation: spin 2.4s var(--ease) infinite reverse;
+  opacity: 0.6;
+}
+
+/* Logo del búho: animación de "respiración" (scale sutil) */
+.preloader__logo {
+  width: clamp(120px, 22vw, 200px);
+  height: auto;
+  animation: breathe 3s var(--ease) infinite;
+  /* Doble drop-shadow para efecto de brillo en los ojos */
+  filter: drop-shadow(0 0 24px rgba(var(--c-accent), 0.35))
+          drop-shadow(0 0 48px rgba(var(--c-accent), 0.15));
+  z-index: 2; /* encima de los anillos */
+}
+
+/* Texto "Cargando..." con puntos suspensivos animados */
+.preloader__text {
+  font-family: var(--font-display);
+  font-size: clamp(0.95rem, 1.8vw, 1.15rem);
+  letter-spacing: var(--display-ls); /* -0.02em */
+  color: var(--text);                /* #e9f0f8 */
+  font-weight: 400;
+  text-align: center;
+  animation: ellipsis 1.8s steps(3) infinite;
+  /* Truco: content en pseudo-elemento para animar los puntos */
+}
+
+.preloader__text::after {
+  content: "";
+  display: inline-block;
+  width: 1.2em;
+  text-align: left;
+}
+
+/* ============================================================
+   KEYFRAMES
+   ============================================================ */
+
+/* Respiración del logo: 0.95 → 1.05 → 0.95 (scale 1.03 peak) */
+@keyframes breathe {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+
+/* Rotación continua de los anillos */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Pulso del glow de fondo */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* Puntos suspensivos: usa steps(3) para saltos discretos */
+@keyframes ellipsis {
+  0%   { /* Cargando */ }
+  33%  { /* Cargando. */ }
+  66%  { /* Cargando.. */ }
+  100% { /* Cargando... */ }
+}
+
+/* El contenido real de los puntos se maneja via JS en el componente
+   para mejor control de accesibilidad (aria-live). */
+
+/* ============================================================
+   REDUCED MOTION
+   Respeta prefers-reduced-motion: reduce
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  .preloader__logo,
+  .preloader__ring,
+  .preloader__ring::before,
+  .preloader__glow,
+  .preloader__text {
+    animation: none !important;
+  }
+  .preloader__logo { transform: scale(1); }
+  .preloader__ring {
+    border-top-color: var(--accent);
+    border-right-color: var(--accent-3);
+  }
+  .preloader__text::after { content: "..."; }
+  .preloader {
+    transition: opacity 300ms var(--ease);
+  }
+}
+
+/* ============================================================
+   RESPONSIVE
+   Ajustes para móviles pequeños
+   ============================================================ */
+@media (max-width: 480px) {
+  .preloader { gap: 20px; }
+  .preloader__logo { width: clamp(100px, 28vw, 160px); }
+  .preloader__ring-wrapper {
+    width: clamp(140px, 32vw, 220px);
+    height: clamp(140px, 32vw, 220px);
+  }
+  .preloader__glow {
+    width: clamp(160px, 40vw, 280px);
+  }
+}
