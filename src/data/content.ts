@@ -96,26 +96,18 @@ export const RAIL_HEAD = {
 
 /* ---------- Marquesina de logos de clientes ---------- */
 export const MARQUEE_LOGOS = [
-  "Biatech logo.png",
-  "Casa Malbec Logo 1.png",
+  "Bia Tech.png",
+  "Blacl panthers hoizontal.png",
   "consin.png",
-  "EXTRABRUT_LOGOS DIGITAL_RGB_NEGRO_BLANCO_BLANCO.png",
-  "HSA B 1.png",
-  "iamgo_blanco@300x.png",
-  "inta-argentina.png",
-  "logo mat.png",
-  "logo ultratienda.png",
-  "logo-blanco-1-300x139.png",
-  "logo-horizontal-blanco.png",
-  "Logo-LTN-Blanco.png",
-  "Logo-Redes-Compress-BLANCO.png",
-  "Logotipo con bajada Essentia (4).png",
-  "logo-uaysen_patagonia_negro_horizontal.jpg",
-  "marcablanco.png",
-  "Pablo Edelstein - 6.png",
-  "PNG-BLANCO_Mesa de trabajo 1.png",
-  "Recurso 12.png",
-  "Recurso 5.png",
+  "Escuela de Steel Framing.png",
+  "Essentia.png",
+  "Extra Brut.png",
+  "INTA.png",
+  "Ltn.png",
+  "Museo de Arte Tigre.png",
+  "P. Edelstein.png",
+  "Universidad de Aysén.png",
+  "Utra tienda.png",
 ] as const;
 
 /* ---------- Diferencia ---------- */

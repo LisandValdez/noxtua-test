@@ -585,13 +585,21 @@ h1, h2, h3, h4, h5 {
   white-space: nowrap;
 }
 .marquee__item img {
-  max-height: 28px;
+  max-height: 60px;
+  max-width: auto;
   width: auto;
+  height: auto;
   object-fit: contain;
-  opacity: 0.7;
+  opacity: 0.75;
   transition: opacity var(--t) var(--ease);
 }
 .marquee__item img:hover { opacity: 1; }
+
+/* logos verticales: limitan el ancho para que no se aplasten */
+.marquee__item img[style*="aspect-ratio"] {
+  max-height: 36px;
+  max-width: none;
+}
 
 /* ============================================================
    Problema / Diferencial
