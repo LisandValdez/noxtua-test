@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Ambient } from "./components/Ambient";
 import { Nav } from "./components/Nav";
 import { Hero } from "./components/Hero";
@@ -21,8 +22,10 @@ import { savePartial, submitFinal } from "./components/brief/submit";
 import { getWorkSlug, useHashRoute } from "./router";
 import { KEYS, Store } from "./data/storage";
 import type { LeadRecord } from "./data/types";
+import { Preloader } from "./components/Preloader/Preloader";
 
 export default function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const route = useHashRoute();
 
   /* Contrato de envío (Task 9): BriefView arma el record y lo pasa acá. */
@@ -35,6 +38,7 @@ export default function App() {
     Store.del(KEYS.draft);
   };
 
+  // Rutas que no usan el layout principal (no muestran preloader)
   if (route === "/brief") return <BriefView onSubmit={handleFinal} onPartial={handlePartial} />;
 
   if (route === "/panel") return <PanelView />;
@@ -46,28 +50,34 @@ export default function App() {
     return slug ? <WorkPage key={slug} slug={slug} /> : <TrabajosPage />;
   }
 
+  // Ruta principal: muestra preloader y luego el contenido
   return (
     <>
-      <a className="skip" href="#main">
-        Saltar al contenido
-      </a>
-      <Ambient />
-      <Nav />
-      <main>
-        <Hero />
-        <ComoTrabajamos />
-        <Marquee />
-        <Diferencia />
-        <Servicios />
-        <Planes />
-        <Trabajo />
-        <Equipo />
-        <Faq />
-        <Cta />
-        <Contacto />
-      </main>
-      <Footer />
-      <Fab />
+      <Preloader onComplete={() => setIsLoading(false)} />
+      {isLoading ? null : (
+        <>
+          <a className="skip" href="#main">
+            Saltar al contenido
+          </a>
+          <Ambient />
+          <Nav />
+          <main>
+            <Hero />
+            <ComoTrabajamos />
+            <Marquee />
+            <Diferencia />
+            <Servicios />
+            <Planes />
+            <Trabajo />
+            <Equipo />
+            <Faq />
+            <Cta />
+            <Contacto />
+          </main>
+          <Footer />
+          <Fab />
+        </>
+      )}
     </>
   );
 }
