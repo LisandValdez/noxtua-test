@@ -3,6 +3,8 @@
    Migrado desde index 1.html. Tema NAVY/DORADO por defecto
    (base: [data-theme="azul"] original + ajuste de la paleta).
    ============================================================ */
+   @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&display=swap');
+   
 :root {
   /* ═══ TEMA NAVY / DORADO (por defecto) ═══ */
   --c-accent: 253, 189, 14; --c-text: 233, 240, 248; --c-muted: 154, 167, 182;
@@ -22,7 +24,6 @@
   --line: rgba(var(--c-text), 0.09);
   --line-2: rgba(var(--c-text), 0.16);
 
-  /* Tipografía de cuerpo y utilitaria - solo Source Sans 3 */
   --font-body: "Baloo 2", system-ui, sans-serif;
   --font-mono: "Baloo 2", system-ui, sans-serif;
 
