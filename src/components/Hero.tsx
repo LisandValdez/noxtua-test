@@ -1,5 +1,6 @@
 import { motion, useReducedMotion, type Variants } from "framer-motion";
 import { HERO } from "../data/content";
+import { RotatingWord } from "./RotatingWord";
 
 const EASE = [0.22, 1, 0.36, 1] as const;
 
@@ -52,34 +53,12 @@ export function Hero() {
       <div className="container">
         <div className="hero__content-wrapper">
           <div className="hero__content">
-            <motion.h1
-              className="h-xxl"
-              variants={{
-                hidden: {},
-                visible: { transition: { staggerChildren: 0.08, delayChildren: 0.06 } },
-              }}
-              initial={initial}
-              animate="visible"
-            >
-              {HERO.h1.map((line, i) => (
-                <motion.span key={i} className="split-line" variants={{ hidden: {}, visible: {} }}>
-                  <motion.span
-                    variants={{
-                      hidden: { y: "115%" },
-                      visible: { y: 0, transition: { duration: 0.8, ease: EASE } },
-                    }}
-                  >
-                    {line}
-                    {i === HERO.h1.length - 1 && <em className="serif-em">{HERO.h1Em}</em>}
-                  </motion.span>
-                </motion.span>
-              ))}
+            <motion.h1 className="h-xxl hero__title" initial={initial} variants={fadeUp(0)} animate="visible">
+              {HERO.h1} <RotatingWord words={HERO.rotatingWords} />
             </motion.h1>
 
             <motion.p className="lead hero__sub" variants={fadeUp(0.12)} initial={initial} animate="visible">
-              {HERO.subBefore}
-              <strong style={{ color: "var(--text)", fontWeight: 500 }}>{HERO.subStrong}</strong>
-              {HERO.subAfter}
+              {HERO.sub}
             </motion.p>
 
             <motion.div className="hero__actions" variants={fadeUp(0.22)} initial={initial} animate="visible">
