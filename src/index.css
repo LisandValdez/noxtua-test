@@ -368,6 +368,36 @@ h1, h2, h3, h4, h5 {
 /* Líneas del título (split-line reveal) */
 .split-line { display: block; overflow: hidden; }
 
+/* Palabra rotativa del título (RotatingWord) */
+.rotating-word {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+.rotating-word__spacer {
+  visibility: hidden;
+  white-space: nowrap;
+  font: inherit;
+}
+.rotating-word__current {
+  position: absolute;
+  left: 0;
+  top: 0;
+  white-space: nowrap;
+  font: inherit;
+}
+
+/* Solo lectura (para screen readers) */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ============================================================
    Tarjeta base (superficie premium)
    ============================================================ */

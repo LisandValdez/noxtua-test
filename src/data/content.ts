@@ -38,15 +38,9 @@ export const NAV_CTA = "Empezar el análisis";
 export const HERO = {
   badgeKicker: "Sin costo",
   badge: "Analizamos tu marca antes de la primera reunión",
-  h1: [
-    "Diseñamos tu marca,",
-    "construimos tu sitio",
-    "y hacemos que ",
-  ],
-  h1Em: "venda.",
-  subBefore: "Cuatro personas trabajando sobre la misma estrategia para que la ",
-  subStrong: "identidad, el sitio y las campañas",
-  subAfter: " de tu negocio digan exactamente lo mismo.",
+  h1: "Aterrizamos tus ideas y las convertimos en",
+  rotatingWords: ["Resultados", "Crecimiento", "Creatividad", "Diseño"],
+  sub: "Conectamos diseño, desarrollo y marketing para acompañar el crecimiento de tu marca.",
   primaryCta: "Solicitar el análisis",
   ghostCta: "Ver trabajo",
   note: "El análisis inicial no tiene costo y el formulario lleva ocho minutos.",
